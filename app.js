@@ -6,6 +6,7 @@ const path = require('path');
 const session = require('express-session');
 
 /* ROUTES */
+const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/main');
 
 /* Databse connection */
@@ -35,6 +36,7 @@ app.use(
 );
 
 /* EXPRESS ROUTES */
+app.use('/user', authRoutes);
 app.use(mainRoutes);
 
 const port = process.env.PORT || 3000;
