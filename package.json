@@ -1,7 +1,7 @@
 {
-  "name": "node_mongo_starter",
+  "name": "aperture",
   "version": "1.0.0",
-  "description": "A starter for node.js applications running MongoDB on the backend",
+  "description": "A node.js application for sharing one's images and experiences on the internet",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

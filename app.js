@@ -5,6 +5,9 @@ const methodOverride = require('method-override');
 const path = require('path');
 const session = require('express-session');
 
+/* ROUTES */
+const mainRoutes = require('./routes/main');
+
 /* Databse connection */
 const db = require('./config/mongodb');
 
@@ -12,8 +15,8 @@ const db = require('./config/mongodb');
 const MongoStore = require('connect-mongodb-session')(session);
 
 const store = new MongoStore({
-	uri,
-	collection,
+	uri: 'mongodb://localhost:27017',
+	collection: 'sessions',
 });
 
 const app = express();
@@ -31,9 +34,12 @@ app.use(
 	})
 );
 
+/* EXPRESS ROUTES */
+app.use(mainRoutes);
+
 const port = process.env.PORT || 3000;
 
-app.listen(3000, () => {
+app.listen(port, () => {
 	db();
 	console.log(`Node.js application now live on port ${port}`);
 });
