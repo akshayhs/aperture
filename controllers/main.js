@@ -9,3 +9,7 @@ exports.displayAbout = (req, res) => {
 exports.displayGallery = (req, res) => {
 	res.render('./gallery', { title: 'Gallery', user: res.locals.currentloggedInUserUser });
 };
+
+exports.displayMembers = (req, res) => {
+	res.render('./members', { title: 'All members', user: res.locals.currentloggedInUserUser });
+};
