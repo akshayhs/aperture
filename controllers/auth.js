@@ -77,3 +77,12 @@ exports.authenticateUser = (req, res) => {
 			console.log(error);
 		});
 };
+
+exports.attemptLogout = (req, res) => {
+	req.session.isLoggedIn = false;
+	req.session.user = null;
+	req.session.destroy((error) => {
+		if (error) console.log(error);
+		res.redirect('/');
+	});
+};
