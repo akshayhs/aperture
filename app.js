@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 });
 
 /* EXPRESS ROUTES */
-app.use('/users', authRoutes);
+app.use('/auth', authRoutes);
 app.use(mainRoutes);
 
 const port = process.env.PORT || 3000;
