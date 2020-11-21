@@ -37,11 +37,19 @@ exports.createAccount = (req, res) => {
 
 /* READ */
 exports.displayLogin = (req, res) => {
-	res.render('./auth/login', { title: 'Login to your account', csrfToken: res.locals.csrfToken });
+	res.render('./auth/login', {
+		title: 'Login to your account',
+		csrfToken: res.locals.csrfToken,
+		user: res.locals.loggedInUser,
+	});
 };
 
 exports.displaySignup = (req, res) => {
-	res.render('./auth/register', { title: 'Get started', csrfToken: res.locals.csrfToken });
+	res.render('./auth/register', {
+		title: 'Get started',
+		csrfToken: res.locals.csrfToken,
+		user: res.locals.loggedInUser,
+	});
 };
 
 exports.authenticateUser = (req, res) => {
