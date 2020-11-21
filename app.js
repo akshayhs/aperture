@@ -17,7 +17,7 @@ const db = require('./config/mongodb');
 const MongoStore = require('connect-mongodb-session')(session);
 
 const store = new MongoStore({
-	uri: 'mongodb://localhost:27017',
+	uri: 'mongodb://localhost:27017/aperture',
 	collection: 'sessions',
 });
 
@@ -44,7 +44,7 @@ app.use(csrfToken);
 /* LOCALS */
 app.use((req, res, next) => {
 	res.locals.isAuthenticated = req.session.isLoggedIn;
-	res.locals.currentUser = req.session.user;
+	res.locals.loggedInUser = req.session.user;
 	res.locals.csrfToken = req.csrfToken();
 	next();
 });
