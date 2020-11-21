@@ -11,9 +11,9 @@ exports.createAccount = (req, res) => {
 	User.findOne({ $or: [ { username: username }, { email: email } ] })
 		.then((foundUser) => {
 			/* Reject account creation if details already exist */
-			if (foundUser) return res.redirect('/user/register');
+			if (foundUser) return res.redirect('/auth/register');
 			/* Reject account creation if password fields do not match */
-			if (password !== c_password) return res.redirect('/user/register');
+			if (password !== c_password) return res.redirect('/auth/register');
 			return bcrypt.hash(c_password, 12);
 		})
 		.then((encryptedPassword) => {
@@ -59,13 +59,13 @@ exports.authenticateUser = (req, res) => {
 	User.findOne({ $or: [ { username: user }, { email: user } ] })
 		.then((foundUser) => {
 			/* Redirect if user not found */
-			if (!foundUser) return res.redirect('/user/login');
+			if (!foundUser) return res.redirect('/auth/login');
 			currentUser = foundUser;
 			return bcrypt.compare(password, foundUser.password);
 		})
 		.then((passwordsMatch) => {
 			/* Redirect if authentication failed */
-			if (!passwordsMatch) return res.redirect('/user/login');
+			if (!passwordsMatch) return res.redirect('/auth/login');
 			req.session.isLoggedIn = true;
 			req.session.user = currentUser;
 			req.session.save((error) => {
