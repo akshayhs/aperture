@@ -4,6 +4,7 @@ const express = require('express');
 const methodOverride = require('method-override');
 const path = require('path');
 const session = require('express-session');
+const csrf = require('csurf');
 
 /* ROUTES */
 const authRoutes = require('./routes/auth');
@@ -20,6 +21,9 @@ const store = new MongoStore({
 	collection: 'sessions',
 });
 
+/* For CSRF protection */
+const csrfToken = csrf();
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -34,6 +38,16 @@ app.use(
 		store: store,
 	})
 );
+/* CSRF token */
+app.use(csrfToken);
+
+/* LOCALS */
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.session.isLoggedIn;
+	res.locals.currentUser = req.session.user;
+	res.locals.csrfToken = req.csrfToken();
+	next();
+});
 
 /* EXPRESS ROUTES */
 app.use('/user', authRoutes);
