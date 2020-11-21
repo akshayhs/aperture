@@ -1,6 +1,41 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
 <div class="container my-3">
-  <h1>Create your account</h1>
+  <h1 class="text-center py-2">Create your account</h1>
+  <div class="row justify-content-center">
+    <div class="card align-self-center w-50 p-3 border-secondary bg-light">
+      <form action="/user/register" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">   
+        <div class="form-group">
+          <div class="row">
+            <div class="col">
+              <label class="font-weight-bold" for="username">Username</label>
+              <input type="text" class="border-dark form-control" name="username" id="username" required>
+            </div>
+            <div class="col">
+              <label class="font-weight-bold" for="email">E-mail address</label>
+              <input type="email" class="border-dark form-control" name="email" id="email" required>              
+            </div>
+          </div>      
+        </div>              
+        <div class="form-group">
+          <label class="font-weight-bold" for="password">Password</label>
+          <input type="password" class="border-dark form-control" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+          <label class="font-weight-bold" for="c_password">Confirm password</label>
+          <input type="password" class="border-dark form-control" name="c_password" id="c_password" required>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" name="terms" id="terms" checked="true" disabled>
+          <label for="terms">By creating an account on the platform, it is hereby assumed you have read the terms of usage of the platform and you agree to it.</label>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-success" type="submit">Register</button>
+          <button class="btn btn-danger mx-3" type="reset">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 <%- include('../partials/footer') %>
