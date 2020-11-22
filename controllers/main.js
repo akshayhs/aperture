@@ -25,6 +25,14 @@ exports.displayGallery = (req, res) => {
 	});
 };
 
+exports.displayBlogs = (req, res) => {
+	res.render('./blogs', {
+		title: 'Blogs/discussions',
+		user: res.locals.loggedInUser,
+		isAuthenticated: res.locals.isAuthenticated,
+	});
+};
+
 exports.displayMembers = async (req, res) => {
 	res.render('./members', {
 		title: 'Members',
