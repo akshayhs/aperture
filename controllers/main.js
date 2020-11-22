@@ -1,16 +1,28 @@
 const User = require('../models/user');
 
 exports.displayIndex = (req, res) => {
-	console.log(res.locals.currentUser)
-	res.render('./index', { title: 'Welcome!', user: res.locals.currentUser });
+	console.log(res.locals.currentUser);
+	res.render('./index', {
+		title: 'Welcome!',
+		user: res.locals.loggedInUser,
+		isAuthenticated: res.locals.isAuthenticated,
+	});
 };
 
 exports.displayAbout = (req, res) => {
-	res.render('./about', { title: 'About', user: res.locals.currentUser });
+	res.render('./about', {
+		title: 'About',
+		user: res.locals.loggedInUser,
+		isAuthenticated: res.locals.isAuthenticated,
+	});
 };
 
 exports.displayGallery = (req, res) => {
-	res.render('./gallery', { title: 'Gallery', user: res.locals.currentUser });
+	res.render('./gallery', {
+		title: 'Gallery',
+		user: res.locals.loggedInUser,
+		isAuthenticated: res.locals.isAuthenticated,
+	});
 };
 
 exports.displayMembers = async (req, res) => {
@@ -19,5 +31,7 @@ exports.displayMembers = async (req, res) => {
 		user: res.locals.currentUser,
 		count: await User.find().countDocuments(),
 		users: await User.find(),
+		isAuthenticated: res.locals.isAuthenticated,
+		user: res.locals.loggedInUser,
 	});
 };
