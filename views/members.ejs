@@ -1,0 +1,33 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+  <div class="container my-3 py-3">
+    <h1>Members</h1>
+    <p class="my-2">There are currently <Strong><%= count %></Strong> members.</p>
+    <table class="my-2 table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-capitalize" scope="col">username</th>
+          <th class="text-capitalize" scope="col">First Name</th>
+          <th class="text-capitalize" scope="col">Last Name</th>
+          <th class="text-capitalize" scope="col">Country</th>
+          <th class="text-capitalize" scope="col">User since</th>
+          <th class="text-capitalize" scope="col">Total works</th>
+          <th class="text-capitalize" scope="col">Total blogs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr></tr>
+          <th scope="row"><%= user.username %></th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= user.createdAt.getDate() %>-<%= user.createdAt.getMonth()+1 %>-<%= user.createdAt.getFullYear() %></td>
+          <td><%= user.images.length %></td>
+          <td><%= user.blogs.length %></td>
+        <% }) %>
+        
+      </tbody>
+    </table>
+  </div>
+<%- include('./partials/footer') %>
