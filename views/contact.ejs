@@ -1,0 +1,60 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+<div class="container my-3">
+  <h1>Contact</h1>
+  <div class="row mx-1 my-3">
+      <form class="card border-secondary p-5" action="/contact/success" method="POST">
+        <div class="row">
+          <div class="col">
+            <label for="firstname" class="font-weight-bold text-capitalize">first name</label>
+            <input type="text" name="firstname" id="firstname" class="form-control border-secondary" required>
+          </div>
+          <div class="col">
+            <label for="lastname" class="font-weight-bold text-capitalize">last name</label>
+            <input type="text" name="lastname" id="lastname" class="form-control border-secondary">
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <label for="email" class="font-weight-bold text-capitalize">e-mail address</label>
+            <input type="email" name="email" id="email" class="form-control border-secondary" required>
+          </div>
+          <div class="col">
+            <label for="phone" class="font-weight-bold text-capitalize">phone</label>
+            <input type="tel" name="phone" id="phone" class="form-control border-secondary" required>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <label class="font-weight-bold text-capitalize" for="reason">Reason for contacting us</label>
+            <input class="form-control border-secondary" list="reason" placeholder="Select an option OR enter your own">
+            <datalist id="reason" name="reason">
+              <option value="General"></option>
+              <option value="Report a problem"></option>
+              <option value="Coyright infringement"></option>
+              <option value="Account issues"></option>
+            </datalist>
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <label for="message" class="font-weight-bold text-capitalize">your message</label>
+            <textarea class="form-control border-secondary" name="message" id="message" cols="30" rows="5" class="form-control" minlength="140" rows="10" required placeholder="Enter your message here"></textarea>
+          </div>
+        </div>  
+        <div class="row my-3">
+          <div class="col">
+            <input type="checkbox" name="consent" id="consent">
+            <label for="consent">By submitting information on this website, you hereby agree that you provide your consent to be contacted using the above details</label>
+          </div>
+        </div>
+        <div class="row my-3 ">
+          <div class="col">
+            <button class="btn btn-success font-weight-bold border-success" type="submit">Submit</button>
+            <button class="btn btn-warning ml-2 font-weight-bold border-warning" type="reset">Reset</button>
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
+<%- include('./partials/footer') %>
