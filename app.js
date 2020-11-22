@@ -7,6 +7,7 @@ const session = require('express-session');
 const csrf = require('csurf');
 
 /* ROUTES */
+const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/main');
 
@@ -50,6 +51,7 @@ app.use((req, res, next) => {
 });
 
 /* EXPRESS ROUTES */
+app.use('/users/', userRoutes);
 app.use('/auth', authRoutes);
 app.use(mainRoutes);
 
