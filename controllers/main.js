@@ -43,3 +43,15 @@ exports.displayMembers = async (req, res) => {
 		user: res.locals.loggedInUser,
 	});
 };
+
+exports.displayContact = async (req, res) => {
+	res.render('./contact', {
+		title: 'Blogs/discussions',
+		user: res.locals.loggedInUser,
+		isAuthenticated: res.locals.isAuthenticated,
+	});
+};
+
+exports.catchAll = (req, res) => {
+	res.status(404).send('No such route! Redirecting to homepage within 5 seconds...');
+};
