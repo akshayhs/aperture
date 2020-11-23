@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
+const transporter = require('../config/sendgrid');
 
 /* CREATE */
 exports.createAccount = (req, res) => {
@@ -35,6 +36,15 @@ exports.createAccount = (req, res) => {
 		})
 		.then((newUser) => {
 			res.redirect('/');
+			const email = {
+				to: `${newUser.email}`,
+				from: 'ak.prodigy24@gmail.com',
+				subject: 'Welcome to aperture!',
+				html: '<p>Get started!</p>',
+			};
+			transporter.sendMail(email, (error, success) => {
+				if (error) console.log(error);
+			});
 		})
 		.catch((error) => {
 			console.log(error);
@@ -45,7 +55,6 @@ exports.createAccount = (req, res) => {
 exports.displayLogin = (req, res) => {
 	message = req.flash('error');
 	if (message.length === 0) message = null;
-	console.log(message);
 	res.render('./auth/login', {
 		title: 'Login to your account',
 		csrfToken: res.locals.csrfToken,
@@ -56,7 +65,6 @@ exports.displayLogin = (req, res) => {
 
 exports.displaySignup = (req, res) => {
 	let message = req.flash('error');
-	console.log(message);
 	if (message.length === 0) message = null;
 	res.render('./auth/register', {
 		title: 'Get started',
