@@ -1,10 +1,11 @@
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 const express = require('express');
 const methodOverride = require('method-override');
 const path = require('path');
 const session = require('express-session');
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 /* ROUTES */
 const userRoutes = require('./routes/users');
@@ -41,6 +42,8 @@ app.use(
 );
 /* CSRF token */
 app.use(csrfToken);
+/* For flash messages */
+app.use(flash());
 
 /* LOCALS */
 app.use((req, res, next) => {
