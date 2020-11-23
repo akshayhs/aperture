@@ -52,8 +52,11 @@
           <ul>
             <li>By deleting your account, all of your personal information, including your images and blogs, comments of other's works will be deleted.&nbsp;Your access to this website using your login credentials will be immediately terminated.&nbsp;You will never be able to login to your account again.</li>
             <li>This action is irreversible - once your data has been deleted from our servers, we cannot recover it manually again.</li>
-            <li>You hereby acknowledge that the deletion process is an instant process. Once the button below is clicked, you will be logged out of this website and be redirected to the main page.</li>
+            <li>You hereby acknowledge that deleting an account is an instant process. Once the button below is clicked, you will be logged out of this website and be redirected to the main page.</li>
           </ul>
+          <form action="/users/profile/<%= user.username %>/delete" method="POST">
+            <button class="btn btn-danger font-weight-bold text-uppercase" type="submit">delete account</button>
+          </form>
         </div>        
       </div>
     </div> 
