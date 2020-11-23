@@ -2,16 +2,21 @@
 <%- include('../partials/nav') %>
 <div class="container my-3">
   <h1 class="text-center py-2">Create your account</h1>
+  <% if(error) { %>
+    <p class="d-flex justify-content-center text-danger border-info p-2 font-weight-bold mb-3"><%= error %></p>
+  <% } %>
+  <div class="d-flex justify-content-center row">    
+  </div>
   <div class="row justify-content-center">
-    <div class="card align-self-center w-50 p-3 border-secondary bg-light">
+        <div class="card align-self-center w-50 p-3 border-secondary bg-light">
       <form action="/auth/register" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">   
         <div class="form-group">
           <div class="row">
             <div class="col">
               <label class="font-weight-bold" for="username">Username</label>
-              <input type="text" class="border-dark form-control" name="username" id="username" required>
-            </div>
+              <input type="text" class="border-dark form-control" name="username" id="username" required>              
+            </div>            
             <div class="col">
               <label class="font-weight-bold" for="email">E-mail address</label>
               <input type="email" class="border-dark form-control" name="email" id="email" required>              
