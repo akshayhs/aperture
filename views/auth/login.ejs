@@ -3,6 +3,11 @@
 <div class="container my-3">
   <h1 class="text-center py-2">Login to your account</h1>
   <div class="row justify-content-center">
+    <% if(error) { %>
+      <p class="bg-danger text-white border-info p-2 font-weight-bold"><%= error %></p>
+    <% } %>
+  </div>
+  <div class="row justify-content-center">
     <div class="card align-self-center w-30 p-3 border-secondary bg-light">
       <form action="/auth/login/succeeded" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">    
