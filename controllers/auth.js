@@ -11,9 +11,15 @@ exports.createAccount = (req, res) => {
 	User.findOne({ $or: [ { username: username }, { email: email } ] })
 		.then((foundUser) => {
 			/* Reject account creation if details already exist */
-			if (foundUser) return res.redirect('/auth/register');
+			if (foundUser) {
+				req.flash('error', 'The entered username already exists. Please choose a new username');
+				return res.redirect('/auth/register');
+			}
 			/* Reject account creation if password fields do not match */
-			if (password !== c_password) return res.redirect('/auth/register');
+			if (password !== c_password) {
+				req.flash('error', 'The entered passwords do not match. Please try again.');
+				return res.redirect('/auth/register');
+			}
 			return bcrypt.hash(c_password, 12);
 		})
 		.then((encryptedPassword) => {
@@ -37,18 +43,26 @@ exports.createAccount = (req, res) => {
 
 /* READ */
 exports.displayLogin = (req, res) => {
+	message = req.flash('error');
+	if (message.length === 0) message = null;
+	console.log(message);
 	res.render('./auth/login', {
 		title: 'Login to your account',
 		csrfToken: res.locals.csrfToken,
 		user: res.locals.loggedInUser,
+		error: message,
 	});
 };
 
 exports.displaySignup = (req, res) => {
+	let message = req.flash('error');
+	console.log(message);
+	if (message.length === 0) message = null;
 	res.render('./auth/register', {
 		title: 'Get started',
 		csrfToken: res.locals.csrfToken,
 		user: res.locals.loggedInUser,
+		error: message,
 	});
 };
 
@@ -59,13 +73,18 @@ exports.authenticateUser = (req, res) => {
 	User.findOne({ $or: [ { username: user }, { email: user } ] })
 		.then((foundUser) => {
 			/* Redirect if user not found */
-			if (!foundUser) return res.redirect('/auth/login');
+			if (!foundUser) {
+				return res.redirect('/auth/login');
+			}
 			currentUser = foundUser;
 			return bcrypt.compare(password, foundUser.password);
 		})
 		.then((passwordsMatch) => {
 			/* Redirect if authentication failed */
-			if (!passwordsMatch) return res.redirect('/auth/login');
+			if (!passwordsMatch) {
+				req.flash('error', 'The entered username/password is incorrect. Please try again.');
+				return res.redirect('/auth/login');
+			}
 			req.session.isLoggedIn = true;
 			req.session.user = currentUser;
 			req.session.save((error) => {
