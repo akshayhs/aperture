@@ -3,6 +3,7 @@ const controller = require('../controllers/main');
 
 const router = express.Router();
 
+router.post('/contact/success', controller.submitResponse);
 router.get('/blogs', controller.displayBlogs);
 router.get('/members', controller.displayMembers);
 router.get('/gallery', controller.displayGallery);
