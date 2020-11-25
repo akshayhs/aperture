@@ -26,7 +26,7 @@
       </form>
     </ul>
     <% if(isAuthenticated) { %>
-      <a class="nav-link text-white">Hey, <%= user.username %>!</a>    
+      <a class="nav-link text-white">Hi,&nbsp;<%= user.username %>!</a>    
       <a href="/auth/logout" class="btn btn-warning text-dark"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</a>    
     <% } else { %>
       <a href="/auth/login" class="nav-link text-white"><i class="fas fa-user-lock"></i>&nbsp;Log in</a>    
