@@ -6,6 +6,7 @@
       <h5 class="text-uppercase font-weight-bold">account</h5>
       <ul class="list-group mt-3 mr-3 border-0">
         <div class="list-group-item text-capitalize"><a href="#">personal information</a></div>
+        <div class="list-group-item text-capitalize"><a href="#">complete your profile</a></div>
         <div class="list-group-item text-capitalize"><a href="#">password</a></div>
         <div class="list-group-item text-capitalize"><a href="#">Your images</a></div>
         <div class="list-group-item text-capitalize"><a href="#">Your blogs</a></div>
@@ -21,8 +22,16 @@
         </div>        
       </div>
       <div class="col-lg-8 my-3">
-        <label for="username" class="font-weight-bold text-capitalize">username</label>
-        <input class="form-control" type="text" name="username" id="username" value="<%= user.username %>" disabled>
+        <div class="row my-3">
+          <div class="col">
+            <label for="username" class="font-weight-bold text-capitalize">username</label>
+            <input class="form-control" type="text" name="username" id="username" value="<%= user.username %>" disabled>
+          </div>
+          <div class="col">
+            <label for="date-created" class="font-weight-bold text-capitalize">user since</label>
+            <p class="form-control"><%= user.createdAt.getDate() %>-<%= user.createdAt.getMonth()+1 %>-<%= user.createdAt.getFullYear() %></p>
+          </div>
+        </div>
         <div class="row my-3">
           <div class="col">
             <label class="font-weight-bold text-capitalize" for="firstname">first name</label>
