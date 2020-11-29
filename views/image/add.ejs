@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container my-3 p-3">
+  <h1>Add your image</h1>
+  <!-- Image upload Form -->
+  <form class="card p-5 my-3" action="" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <!-- Image upload field -->
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label class="font-weight-bold text-capitalize" for="image">select an image</label>
+          <input class="form-control-file my-1" type="file" name="image" id="image" required>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="category" class="font-weight-bold text-capitalize">category</label>
+          <select class="form-control" name="category" id="category">
+            <option value="">Please choose a suitable category</option>
+            <option class="text-capitalize" value="abstract">abstract</option>
+            <option class="text-capitalize" value="creative">creative</option>
+            <option class="text-capitalize" value="landscape">landscape</option>
+            <option class="text-capitalize" value="monochrome">monochrome</option>
+            <option class="text-capitalize" value="nature">nature</option>
+            <option class="text-capitalize" value="open">open</option>
+            <option class="text-capitalize" value="pictorial">pictorial</option>
+            <option class="text-capitalize" value="street">street</option>
+            <option class="text-capitalize" value="travel">travel</option>
+          </select>
+        </div>
+      </div>
+    </div>   
+    <hr class="border-secondary my-3" style="opacity:0.25;"> 
+    <!-- Image title -->
+    <h5 class="text-capitalize font-weight-bold my-2">picture information</h5>
+    <div class="form-group my-3">
+      <label for="title" class="font-weight-bold text-capitalize">title</label>
+      <input class="form-control" type="text" name="title" id="title" placeholder="Choose a suitable image" required>
+    </div>
+    <!-- Image description -->
+    <div class="form-group my-3">
+      <label for="description" class="font-weight-bold text-capitalize">description</label>
+      <textarea class="form-control" name="description" id="description" cols="30" rows="10" autocapitalize="sentences" spellcheck="default" required></textarea>
+    </div>
+    <hr class="border-secondary my-3" style="opacity:0.25;">
+    <h5 class="text-capitalize font-weight-bold my-3">technical information</h5>
+    <div class="form-group">
+      <div class="row">
+        <div class="col my-2">
+          <label for="camera" class="font-weight-bold text-capitalize">camera information</label>
+          <input class="form-control" type="text" name="camera" id="camera" required>
+        </div>
+        <div class="col my-2">
+          <label for="lens" class="font-weight-bold text-capitalize">lens information</label>
+          <input class="form-control" type="text" name="lens" id="lens" required>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  
+    
+
+  </div>
+</div>
+<%- include('../partials/footer') %>
