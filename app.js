@@ -8,6 +8,7 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 
 /* ROUTES */
+const galleryRoutes = require('./routes/image');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/main');
@@ -54,7 +55,8 @@ app.use((req, res, next) => {
 });
 
 /* EXPRESS ROUTES */
-app.use('/users/', userRoutes);
+app.use('/gallery', galleryRoutes);
+app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use(mainRoutes);
 
