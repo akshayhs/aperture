@@ -3,8 +3,7 @@
 <div class="container my-3 p-3">
   <h1>Add your image</h1>
   <!-- Image upload Form -->
-  <form class="card p-5 my-3" action="" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <form class="card p-5 my-3" action="/gallery" method="POST" enctype="multipart/form-data">
     <!-- Image upload field -->
     <div class="row">
       <div class="col">
@@ -77,15 +76,12 @@
         <label for="copyright" class="font-weight bold form-check-label">I hereby confirm that I am the sole author of the the image above and agree to cooperate with the platform in case of any copyright infringement claims.</label>
       </div>
       <div class="form-group my-4">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <button type="submit" class="btn btn-info font-weight-bold text-capitalize mr-2">Add image</button>
         <button type="reset" class="btn btn-warning text-capitalize font-weight-bold ml-2">Reset</button>
       </div>
     </div>
   </form>
-
-  
-    
-
   </div>
 </div>
 <%- include('../partials/footer') %>
