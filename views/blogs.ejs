@@ -2,23 +2,38 @@
 <%- include('./partials/nav') %>
 <div class="container my-3">
   <h1>Blogs</h1>
+  <% if(isAuthenticated) { %>
+    <div class="row p-3 d-flex justify-content-center">
+      <a href="/blogs/add" class="btn btn-info h5 font-weight-bold text-uppercase">add your blog</a>
+    </div>
+  <% } %>
+  <% if(blogs.count === 0) { %>
+    <div class="row p-3">
+      <p class="text-warning-font-weight-bold text-center">Sorry, there are no blogs yet!</p>
+    </div>
+  <% } else { %>
   <div class="row p-3">
     <div class="card-columns">
       <% for(blog of blogs) { %>
-        <div class="card <%= isAuthenticated && blog.author.username === user.username ? 'border-secondary' : '' %>" style="width: 18.0rem">
+        <div class="card <%= isAuthenticated && blog.author.username === user.username ? 'border-primary' : '' %>" style="width: 18.0rem">
           <div class="card-body">
             <h5 class="card-title"><%= blog.title %></h5>
-            <a class="btn btn-info" href="/blogs/<%= blog._id%>">View</a>
+            <a class="btn btn-info" target="blank" href="/blogs/<%= blog._id%>">View</a>
             <% if(isAuthenticated && blog.author.username === user.username) { %>
-              <a href="">delete</a>
+              <a class=" ml-2 btn btn-warning font-weight-bold text-capitalize" href="/blogs/<%= blog._id %>/delete">delete</a>
             <% } %>
           </div>
           <div class="card-footer">
-            <small class="text-muted">By <a href="/users/<%= blog.title %>" target="blank"><%= blog.author.firstname || blog.author.username %></a> on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
+            <% if(isAuthenticated && blog.author.username === user.username) { %>
+              <small class="text-muted">You created this post on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
+            <% } else { %>
+              <small class="text-muted">by&nbsp;<%= blog.author.firstname || blog.author.username %></a> on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
+            <% } %>           
           </div>
         </div>
         <% } %>
     </div>
   </div>
+ <% }%>
 </div>
 <%- include('./partials/footer') %>
