@@ -2,5 +2,11 @@
 <%- include('./partials/nav') %>
 <div class="container my-3">
   <h1>Gallery</h1>
+  <% if(isAuthenticated) { %>
+    <div class="row p-3 d-flex justify-content-center">
+      <a href="/gallery/add" class="btn btn-info h5 font-weight-bold text-uppercase">add your image</a>
+    </div>
+  <% } %>
+
 </div>
 <%- include('./partials/footer') %>
