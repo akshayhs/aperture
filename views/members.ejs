@@ -2,8 +2,8 @@
 <%- include('./partials/nav') %>
   <div class="container my-3 py-3">
     <h1>Members</h1>
-    <p class="my-2">There are currently <Strong><%= count %></Strong> members.</p>
-    <table class="my-2 table table-striped table-bordered text-center">
+    <p class="my-2">There are currently <Strong><%= count %></Strong>&nbsp;members.</p>
+    <table class="my-3 table table-striped table-bordered text-center">
       <thead class="thead-dark">
         <tr>
           <th class="text-capitalize" scope="col">username</th>
@@ -12,6 +12,7 @@
           <th class="text-capitalize" scope="col">user since</th>
           <th class="text-capitalize" scope="col">total works</th>
           <th class="text-capitalize" scope="col">total blogs</th>
+          <th class="text-capitalize" scope="col">website</th>
           <th class="text-capitalize" scope="col">details</th>
         </tr>
       </thead>
@@ -19,11 +20,12 @@
         <% users.forEach(user => { %>
           <tr></tr>
           <th scope="row"><%= user.username %></></th>
-          <td></td>
-          <td></td>
-          <td><%= user.createdAt.getDate() %>-<%= user.createdAt.getMonth()+1 %>-<%= user.createdAt.getFullYear() %></td>
+          <td><%= user.name.first %></td>
+          <td><%= user.name.last %></td>
+          <td><%= user.createdAt.toLocaleDateString('en-IN', {month: 'long', day: 'numeric', year: 'numeric'}) %></td>
           <td><%= user.images.length %></td>
           <td><%= user.blogs.length %></td>
+          <td><a class="text-dark" href="https://<%= user.website %>"><%= user.website %></a></td>
           <td><a class="btn-xs btn-secondary text-capitalize font-weight-bold p-2 rounded" href="/users/<%= user.username %>">profile</a></td>
         <% }) %>
         
