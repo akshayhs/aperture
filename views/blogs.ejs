@@ -2,5 +2,23 @@
 <%- include('./partials/nav') %>
 <div class="container my-3">
   <h1>Blogs</h1>
+  <div class="row p-3">
+    <div class="card-columns">
+      <% for(blog of blogs) { %>
+        <div class="card <%= isAuthenticated && blog.author.username === user.username ? 'border-secondary' : '' %>" style="width: 18.0rem">
+          <div class="card-body">
+            <h5 class="card-title"><%= blog.title %></h5>
+            <a class="btn btn-info" href="/blogs/<%= blog._id%>">View</a>
+            <% if(isAuthenticated && blog.author.username === user.username) { %>
+              <a href="">delete</a>
+            <% } %>
+          </div>
+          <div class="card-footer">
+            <small class="text-muted">By <a href="/users/<%= blog.title %>" target="blank"><%= blog.author.firstname || blog.author.username %></a> on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
+          </div>
+        </div>
+        <% } %>
+    </div>
+  </div>
 </div>
 <%- include('./partials/footer') %>
