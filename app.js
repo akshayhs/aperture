@@ -1,14 +1,16 @@
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const methodOverride = require('method-override');
 const path = require('path');
 const session = require('express-session');
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('./config/multer');
 
 /* ROUTES */
 const galleryRoutes = require('./routes/gallery');
+const blogRoutes = require('./routes/blog');
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/main');
@@ -31,7 +33,9 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/gallery', express.static(path.join(__dirname, 'uploads', 'images')));
 app.use(methodOverride('_method'));
 app.use(
 	session({
@@ -45,6 +49,8 @@ app.use(
 app.use(csrfToken);
 /* For flash messages */
 app.use(flash());
+/* For image uploads via multer */
+app.use(multer);
 
 /* LOCALS */
 app.use((req, res, next) => {
@@ -56,6 +62,7 @@ app.use((req, res, next) => {
 
 /* EXPRESS ROUTES */
 app.use('/gallery', galleryRoutes);
+app.use('/blogs', blogRoutes);
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use(mainRoutes);
