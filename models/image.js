@@ -27,6 +27,9 @@ const imageSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	tags: {
+		type: Array,
+	},
 	camera: {
 		type: String,
 		required: true,
