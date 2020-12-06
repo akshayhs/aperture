@@ -61,3 +61,22 @@ exports.displayUploadForm = (req, res) => {
 	});
 	console.log(req.session.user._id);
 };
+
+exports.displayImage = (req, res) => {
+	const id = req.params.id;
+	Image.findOne({ _id: req.params.id })
+		.populate('createdBy')
+		.then((image) => {
+			/* Redirect if no image found with the associated ID */
+			if (!image) return res.redirect('/gallery');
+			res.render('./image/details', {
+				title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
+				user: res.locals.loggedInUser,
+				isAuthenticated: res.locals.isAuthenticated,
+				image: image,
+			});
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
