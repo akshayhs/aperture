@@ -1,7 +1,5 @@
 const multer = require('multer');
-const moment = require('moment-timezone');
-
-const dateIndia = moment.tz(Date.now(), 'Asia/Calcutta');
+const { set } = require('./sendgrid');
 
 const fileFilter = (req, file, cb) => {
 	/* Accept images if mimetypes match */
@@ -13,13 +11,20 @@ const fileFilter = (req, file, cb) => {
 	}
 };
 
+const date = new Date();
+const setFileDate = `${date.getDate()}${date.getMonth()}${date.getFullYear()}${date.getHours()}${date.getMinutes()}${date.getMilliseconds()}`;
+
 const fileStorage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, './uploads/images');
 	},
 	filename: (req, file, cb) => {
-		cb(null, `${file.originalname}${dateIndia}`);
+		cb(null, `${setFileDate}${req.session.user.username}${file.originalname}`);
 	},
 });
 
-module.exports = multer({ fileFilter: fileFilter, storage: fileStorage }).single('image');
+module.exports = multer({
+	fileFilter: fileFilter,
+	storage: fileStorage,
+	limits: { files: 1, fileSize: 0.25 * 1024 * 1024 }, // 250MB
+}).single('image');
