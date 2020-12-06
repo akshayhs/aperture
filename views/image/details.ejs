@@ -1,0 +1,168 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container my-3 p-3">
+  <!-- Title -->
+  <div class="row d-flex justify-content-center">
+    <h3><%= image.title %></h3>
+  </div>
+  <!-- Image -->
+  <div class="row d-flex justify-content-center my-3 col-12">
+    <img class="border border-secondary my-3" src="/<%= image.path %>" alt="<%= image.title %>" loading="lazy">
+  </div>
+  <hr>
+  <!-- Image and technical details -->
+  <div class="row my-3">
+    <!-- Image details -->
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+      <table class="table table-sm">
+        <thead class="thead-dark text-white">
+          <tr>
+            <th scope="row" class="font-weight-bold text-capitalize">image description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-justify"><%= image.description %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Technical details -->
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 ">
+      <!-- Technical details -->
+      <div class="row">
+        <table class="table table-sm">
+          <thead class="thead-dark text-white">
+            <tr>
+              <th scope="row" class="font-weight-bold text-capitalize">technical details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(image.createdBy.name) { %>
+              <tr>
+                <td class="text-capitalize"><span class="font-weight-bold">copyright:</span>&nbsp;<%= image.createdBy.name.first %>&nbsp;<%= image.createdBy.name.last %>&nbsp;(<a target="_blank" href="/users/<%= image.createdBy.username%>"><%= image.createdBy.username %></a>)</td>
+              </tr>
+            <% } else { %>
+              <tr>
+                <td class="text-capitalize"><span class="font-weight-bold">copyright:</span>&nbsp;<a target="_blank" href="/users/<%= image.createdBy.username%>"><%= image.createdBy.username %></a></td>
+              </tr>
+            <% }%>            
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">category:</span>&nbsp;<%= image.category %></td>
+            </tr>
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">date/time posted:</span>&nbsp;<%= image.createdAt.getDate()%>/<%= image.createdAt.getMonth()%>/<%= image.createdAt.getFullYear()%>, <%= image.createdAt.getHours()%>:<%= image.createdAt.getMinutes()%>:<%= image.createdAt.getSeconds()%></td>
+            </tr>
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">camera:</span>&nbsp;<%= image.camera %></td>
+            </tr>
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">lens:</span>&nbsp;<%= image.lens %></td>
+            </tr>
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">exposure:</span>&nbsp;<%= image.exposure %>,&nbsp;<%= image.shutterspeed%>&nbsp;seconds</td>
+            </tr>
+            <tr>
+              <td class="text-capitalize"><span class="font-weight-bold">ISO(sensitivity):</span>&nbsp;<%= image.sensitivity %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Post processing techniques -->      
+      <div class="row">
+        <table class="table table-sm">
+          <thead class="thead-dark text-white">
+            <tr>
+              <th scope="row" class="font-weight-bold text-capitalize">post-processing techniques (if any)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= image.pptechniques %></td>
+            </tr>            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <hr>  
+  <!-- Comment box and comment guidelines-->
+  <div class="row my-3">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+      <% if(isAuthenticated) { %>
+        <!-- Comment form -->
+          <form action="/gallery/:id/comment" method="POST">
+            <!-- CSRF Token -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+            <div class="form-group">
+              <label for="comment" class="font-weight-bold text-capitalize">Add your critique</label>
+              <textarea name="comment" style="overflow-y: scroll; resize: none"id="comment" cols="30" rows="10" class="form-control" placeholder="All critiques must conform to the guidelines seen to the right" minlength="140" maxlength="300" spellcheck="default" required></textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-info font-weight-bold text-capitalize mr-2">comment</button>
+              <button type="reset" class="btn btn-warning font-weight-bold text-capitalize ml-2">reset</button>
+            </div>
+          </form>
+    </div>
+    <!-- Comment guidelines -->
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6"> 
+      <table>
+        <thead>
+          <tr>
+            <th class="text-capitalize" scope="col">guidelines for critiquing one's works</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="font-weight-bold text-capitalize small">DOs</th>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Provide constructive criticism
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Highlight the positives and negatives in their work
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Be civil during your discussions with others
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Encourage authors to provide more information about their work
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="font-weight-bold text-capitalize small">DONTs</th>
+          </tr>          
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Using phrases like "Nice!", "Great job", "Lovely!" etc.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Intimidating or framing the author intentionally
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Flaming others or attracting undue attention 
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Anything else that violates the terms of usage of this platform.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>  
+</div>
+<%- include('../partials/footer') %>
