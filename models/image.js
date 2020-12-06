@@ -48,6 +48,7 @@ const imageSchema = new Schema({
 	},
 	pptechniques: {
 		type: String,
+		default: 'No information has been provided by the user',
 	},
 	copyright: {
 		type: Boolean,
