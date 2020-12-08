@@ -1,4 +1,5 @@
 const multer = require('../config/multer');
+const image = require('../models/image');
 const Image = require('../models/image');
 const User = require('../models/user');
 
@@ -6,7 +7,18 @@ const User = require('../models/user');
 exports.attemptUpload = (req, res) => {
 	const username = req.session.user._id;
 	const path = req.file.path;
-	const { category, title, description, tags, camera, lens, exposure, shutterspeed, copyright } = req.body;
+	const {
+		category,
+		title,
+		description,
+		tags,
+		camera,
+		lens,
+		exposure,
+		shutterspeed,
+		copyright,
+		pptechniques,
+	} = req.body;
 	const tagsValue = tags.split(',');
 	multer(req, res, (error) => {
 		if (error) {
@@ -35,6 +47,7 @@ exports.attemptUpload = (req, res) => {
 						lens,
 						exposure,
 						shutterspeed,
+						pptechniques,
 						copyright: true,
 						createdBy: foundUser._id,
 					});
@@ -79,4 +92,17 @@ exports.displayImage = (req, res) => {
 		.catch((error) => {
 			console.log(error);
 		});
+};
+
+exports.displayImagesByCategory = (req, res) => {
+	const category = req.params.category;
+	Image.find({ category: category }).then((images) => {
+		res.render('./image/images_by_category.ejs', {
+			title: `Images under ${req.params.category}`,
+			user: res.locals.loggedInUser,
+			isAuthenticated: res.locals.isAuthenticated,
+			images: images,
+			category: category,
+		});
+	});
 };
