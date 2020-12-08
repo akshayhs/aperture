@@ -46,9 +46,14 @@ const imageSchema = new Schema({
 		type: String,
 		required: true,
 	},
+	sensitivity: {
+		type: String,
+		required: true,
+	},
 	pptechniques: {
 		type: String,
-		default: 'No information has been provided by the user',
+		minlength: 140,
+		default: 'No information has been provided by the author.',
 	},
 	copyright: {
 		type: Boolean,
