@@ -96,7 +96,7 @@ exports.displayImage = (req, res) => {
 
 exports.displayImagesByCategory = (req, res) => {
 	const category = req.params.category;
-	Image.find({ category: category }).then((images) => {
+	Image.find({ category: category }).populate('createdBy').then((images) => {
 		res.render('./image/images_by_category.ejs', {
 			title: `Images under ${req.params.category}`,
 			user: res.locals.loggedInUser,
