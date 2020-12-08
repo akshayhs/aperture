@@ -35,6 +35,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/gallery/categories/:category/uploads/images', express.static(path.join(__dirname, 'uploads', 'images')));
 app.use('/gallery/uploads/images', express.static(path.join(__dirname, 'uploads', 'images')));
 app.use('/uploads/images', express.static(path.join(__dirname, 'uploads', 'images')));
 app.use(methodOverride('_method'));
