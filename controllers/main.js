@@ -1,5 +1,8 @@
 const User = require('../models/user');
 const Enquiries = require('../models/contact');
+const Blog = require('../models/blog');
+const Image = require('../models/image');
+
 const transporter = require('../config/sendgrid');
 const { Schema } = require('mongoose');
 
@@ -67,6 +70,7 @@ exports.displayIndex = (req, res) => {
 		title: 'Welcome!',
 		user: res.locals.loggedInUser,
 		isAuthenticated: res.locals.isAuthenticated,
+		csrfToken: res.locals.csrfToken,
 	});
 };
 
@@ -78,19 +82,33 @@ exports.displayAbout = (req, res) => {
 	});
 };
 
-exports.displayGallery = (req, res) => {
-	res.render('./gallery', {
-		title: 'Gallery',
-		user: res.locals.loggedInUser,
-		isAuthenticated: res.locals.isAuthenticated,
-	});
+exports.displayGallery = async (req, res) => {
+	await Image.find()
+		.populate('createdBy')
+		.then((images) => {
+			res.render('./gallery', {
+				title: 'Gallery',
+				user: res.locals.loggedInUser,
+				isAuthenticated: res.locals.isAuthenticated,
+				csrfToken: res.locals.csrfToken,
+				images: images,
+			});
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 };
 
 exports.displayBlogs = (req, res) => {
-	res.render('./blogs', {
-		title: 'Blogs/discussions',
-		user: res.locals.loggedInUser,
-		isAuthenticated: res.locals.isAuthenticated,
+	Blog.find().populate('author', 'username').then((blogs) => {
+		blogs.forEach((blog) => {});
+		res.render('./blogs', {
+			title: 'Blogs/discussions',
+			user: res.locals.loggedInUser,
+			isAuthenticated: res.locals.isAuthenticated,
+			csrfToken: res.locals.csrfToken,
+			blogs: blogs,
+		});
 	});
 };
 
