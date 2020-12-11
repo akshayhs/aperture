@@ -5,22 +5,18 @@ const User = require('../models/user');
 
 exports.saveBlog = (req, res) => {
 	const author = req.session.user;
-	const title = req.body.title;
-	const blog = new Blog({ title, author });
-	let post;
+	const { title, abstract, description } = req.body;
+	const blog = new Blog({ title, author, abstract, description });
 	blog
 		.save()
 		.then((savedBlog) => {
-			post = savedBlog;
-			return User.findOne({ username: author });
+			return User.findOneAndUpdate(
+				{ username: author.username },
+				{ $push: { blogs: savedBlog._id } },
+				{ new: true }
+			);
 		})
-		.then((foundUser) => {
-			if (!foundUser) {
-				return res.redirect('/');
-			}
-			return foundUser._id.toString();
-		})
-		.then((savedPost) => {
+		.then((info) => {
 			res.redirect('/blogs');
 		})
 		.catch((error) => {
