@@ -1,5 +1,6 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const Comment = require('../models/blogcomment');
 
 /* CREATE */
 
@@ -21,6 +22,22 @@ exports.saveBlog = (req, res) => {
 		})
 		.catch((error) => {
 			console.log(error);
+		});
+};
+
+exports.addUserComment = (req, res) => {
+	const id = req.params.id;
+	const user = res.locals.loggedInUser;
+	const text = req.body.comment;
+	const comment = new Comment({ blogId: id, author: user, text });
+	comment
+		.save()
+		.then((savedComment) => {
+			console.log(savedComment);
+			return Blog.findOneAndUpdate({ _id: id }, { $push: { comments: savedComment._id } });
+		})
+		.then(() => {
+			res.redirect(`/blogs/${id}`);
 		});
 };
 
