@@ -1,11 +1,12 @@
 const multer = require('../config/multer');
 const image = require('../models/image');
 const Image = require('../models/image');
+const user = require('../models/user');
 const User = require('../models/user');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
-	const username = req.session.user._id;
+	const user = req.session.user;
 	const path = req.file.path;
 	const {
 		category,
@@ -31,35 +32,65 @@ exports.attemptUpload = (req, res) => {
 		} else if (copyright !== 'on') {
 			return res.redirect('/gallery/upload');
 		} else {
-			User.findById({ _id: username })
-				.then((user) => {
-					return user;
-				})
-				.then((foundUser) => {
-					/* Create the image object */
-					const image = new Image({
-						path,
-						category,
-						description,
-						title,
-						tags: tagsValue,
-						camera,
-						lens,
-						exposure,
-						shutterspeed,
-						pptechniques,
-						copyright: true,
-						createdBy: foundUser._id,
-					});
-					return image.save();
-				})
+			const image = new Image({
+				path,
+				category,
+				description,
+				title,
+				tags: tagsValue,
+				camera,
+				lens,
+				exposure,
+				shutterspeed,
+				pptechniques,
+				copyright: true,
+				createdBy: user._id,
+			});
+			image
+				.save()
 				.then((savedImage) => {
-					console.log(savedImage);
+					return User.findOneAndUpdate(
+						{ username: username },
+						{ $push: { images: savedImage._id } },
+						{ new: true }
+					);
+				})
+				.then((info) => {
+					console.log(info);
 					res.redirect('/gallery');
 				})
 				.catch((error) => {
 					console.log(error);
 				});
+			// User.findById({ _id: username })
+			// 	.then((user) => {
+			// 		return user;
+			// 	})
+			// 	.then((foundUser) => {
+			// 		/* Create the image object */
+			// 		const image = new Image({
+			// 			path,
+			// 			category,
+			// 			description,
+			// 			title,
+			// 			tags: tagsValue,
+			// 			camera,
+			// 			lens,
+			// 			exposure,
+			// 			shutterspeed,
+			// 			pptechniques,
+			// 			copyright: true,
+			// 			createdBy: foundUser._id,
+			// 		});
+			// 		return image.save();
+			// 	})
+			// 	.then((savedImage) => {
+			// 		console.log(savedImage);
+			// 		res.redirect('/gallery');
+			// 	})
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 	});
 		}
 	});
 };
@@ -97,12 +128,25 @@ exports.displayImage = (req, res) => {
 exports.displayImagesByCategory = (req, res) => {
 	const category = req.params.category;
 	Image.find({ category: category }).populate('createdBy').then((images) => {
-		res.render('./image/images_by_category.ejs', {
+		res.render('./image/images_by_category', {
 			title: `Images under ${req.params.category}`,
 			user: res.locals.loggedInUser,
 			isAuthenticated: res.locals.isAuthenticated,
 			images: images,
 			category: category,
+		});
+	});
+};
+
+exports.displayImagesByTags = (req, res) => {
+	const tag = req.params.tag;
+	Image.find({ tags: tag }).populate('createdBy').then((images) => {
+		res.render('./image/images_by_tag', {
+			title: `Images for tag: ${req.params.tag}`,
+			user: res.locals.loggedInUser,
+			isAuthenticated: res.locals.isAuthenticated,
+			images: images,
+			tag: tag,
 		});
 	});
 };
