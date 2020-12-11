@@ -22,4 +22,4 @@ const imageCommentSchema = new Schema(
 	{ timestamps: true }
 );
 
-module.exports = mongoose.model('Comment', imageCommentSchema);
+module.exports = mongoose.model('Critique', imageCommentSchema);
