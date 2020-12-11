@@ -19,8 +19,9 @@ exports.attemptUpload = (req, res) => {
 		shutterspeed,
 		copyright,
 		pptechniques,
+		sensitivity,
 	} = req.body;
-	const tagsValue = tags.split(',');
+	const tagsToAdd = tags.split(',');
 	multer(req, res, (error) => {
 		if (error) {
 			res.status(500);
@@ -37,20 +38,21 @@ exports.attemptUpload = (req, res) => {
 				category,
 				description,
 				title,
-				tags: tagsValue,
+				tags: tagsToAdd,
 				camera,
 				lens,
 				exposure,
 				shutterspeed,
 				pptechniques,
 				copyright: true,
-				createdBy: user._id,
+				createdBy: user,
+				sensitivity,
 			});
 			image
 				.save()
 				.then((savedImage) => {
 					return User.findOneAndUpdate(
-						{ username: username },
+						{ username: user.username },
 						{ $push: { images: savedImage._id } },
 						{ new: true }
 					);
@@ -62,35 +64,6 @@ exports.attemptUpload = (req, res) => {
 				.catch((error) => {
 					console.log(error);
 				});
-			// User.findById({ _id: username })
-			// 	.then((user) => {
-			// 		return user;
-			// 	})
-			// 	.then((foundUser) => {
-			// 		/* Create the image object */
-			// 		const image = new Image({
-			// 			path,
-			// 			category,
-			// 			description,
-			// 			title,
-			// 			tags: tagsValue,
-			// 			camera,
-			// 			lens,
-			// 			exposure,
-			// 			shutterspeed,
-			// 			pptechniques,
-			// 			copyright: true,
-			// 			createdBy: foundUser._id,
-			// 		});
-			// 		return image.save();
-			// 	})
-			// 	.then((savedImage) => {
-			// 		console.log(savedImage);
-			// 		res.redirect('/gallery');
-			// 	})
-			// 	.catch((error) => {
-			// 		console.log(error);
-			// 	});
 		}
 	});
 };
@@ -103,7 +76,6 @@ exports.displayUploadForm = (req, res) => {
 		user: res.locals.loggedInUser,
 		isAuthenticated: res.locals.isAuthenticated,
 	});
-	console.log(req.session.user._id);
 };
 
 exports.displayImage = (req, res) => {
