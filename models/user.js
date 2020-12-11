@@ -4,56 +4,54 @@ const dateIndia = moment.tz(Date.now(), 'Asia/Calcutta');
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-	username: {
-		type: String,
-		lowercase: true,
-		required: true,
-		unique: true,
-	},
-	createdAt: {
-		type: Date,
-		default: dateIndia,
-	},
-	updatedAt: { type: Date },
-	email: {
-		type: String,
-		lowercase: true,
-		required: true,
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	name: {
-		first: { type: String },
-		last: { type: String },
-	},
-	website: {
-		type: String,
-	},
-	aboutUser: {
-		type: String,
-	},
-	cameras: {
-		type: String,
-	},
-	lenses: {
-		type: String,
-	},
-	images: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: 'Image',
+const userSchema = new Schema(
+	{
+		username: {
+			type: String,
+			lowercase: true,
+			required: true,
+			unique: true,
 		},
-	],
-	blogs: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: 'Blog',
+		email: {
+			type: String,
+			lowercase: true,
+			required: true,
+			unique: true,
 		},
-	],
-});
+		password: {
+			type: String,
+			required: true,
+		},
+		name: {
+			first: { type: String },
+			last: { type: String },
+		},
+		website: {
+			type: String,
+		},
+		biography: {
+			type: String,
+		},
+		cameras: {
+			type: String,
+		},
+		lenses: {
+			type: String,
+		},
+		images: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Image',
+			},
+		],
+		blogs: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'Blog',
+			},
+		],
+	},
+	{ timestamps: true }
+);
 
 module.exports = mongoose.model('User', userSchema);
