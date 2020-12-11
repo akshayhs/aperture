@@ -47,12 +47,12 @@ const imageSchema = new Schema({
 		required: true,
 	},
 	sensitivity: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	pptechniques: {
 		type: String,
-		minlength: 140,
+		maxlength: 140,
 		default: 'No information has been provided by the author.',
 	},
 	copyright: {
@@ -66,6 +66,7 @@ const imageSchema = new Schema({
 	updatedAt: {
 		type: Date,
 	},
+	critiques: [ { type: Schema.Types.ObjectId, ref: 'Comment' } ],
 });
 
 module.exports = mongoose.model('Image', imageSchema);
