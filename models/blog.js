@@ -9,9 +9,15 @@ const blogSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	content: {
+	abstract: {
 		type: String,
 		required: true,
+		maxlength: 60,
+	},
+	description: {
+		type: String,
+		required: true,
+		maxlength: 3000,
 	},
 	createdAt: {
 		type: Date,
@@ -28,7 +34,7 @@ const blogSchema = new Schema({
 	comments: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: 'User',
+			ref: 'Comment',
 		},
 	],
 });
