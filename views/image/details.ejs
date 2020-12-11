@@ -91,7 +91,7 @@
     <div class="col-12 col-sm-12 col-md-12 col-lg-6">
       <% if(isAuthenticated) { %>
         <!-- Comment form -->
-          <form action="/gallery/:id/comment" method="POST">
+          <form action="/gallery/<%= image._id%>/comment" method="POST">
             <!-- CSRF Token -->
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
             <div class="form-group">
