@@ -1,0 +1,86 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container my-3 p-3">
+  <h1><%= blog.title %></h1>
+  <h4><%= blog.abstract %></h4>
+  <!-- Comment box and comment guidelines-->
+  <div class="row my-3">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+      <% if(isAuthenticated) { %>
+        <!-- Comment form -->
+          <form action="/blogs/<%= blog._id%>/comment" method="POST">
+            <!-- CSRF Token -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+            <div class="form-group">
+              <label for="comment" class="font-weight-bold text-capitalize">Add your comment</label>
+              <textarea name="comment" style="overflow-y: scroll; resize: none" id="comment" cols="30" rows="10" class="form-control" placeholder="All critiques must conform to the guidelines seen to the right" maxlength="300" spellcheck="default" required></textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-info font-weight-bold text-capitalize mr-2">comment</button>
+              <button type="reset" class="btn btn-warning font-weight-bold text-capitalize ml-2">reset</button>
+            </div>
+          </form>
+    </div>
+    <!-- Comment guidelines -->
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6"> 
+      <table>
+        <thead>
+          <tr>
+            <th class="text-capitalize" scope="col">guidelines for critiquing one's works</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="font-weight-bold text-capitalize small">DOs</th>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Provide constructive criticism
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Highlight the positives and negatives in their work
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Be civil during your discussions with others
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-success fa-check-square"></i></span>Encourage authors to provide more information about their work
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="font-weight-bold text-capitalize small">DONTs</th>
+          </tr>          
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Using phrases like "Nice!", "Great job", "Lovely!" etc.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Intimidating or framing the author intentionally
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Flaming others or attracting undue attention 
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="mr-2"><i class="fas text-danger fa-window-close"></i></span>Anything else that violates the terms of usage of this platform.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+    <hr>
+  </div>  
+</div>
+<%- include('../partials/footer') %>
