@@ -1,19 +1,15 @@
 const User = require('../models/user');
 
 /* CREATE */
-exports.saveUserProfile = (req, res) => {
+exports.completeUserProfile = (req, res) => {
 	const username = req.params.username;
-	const firstname = req.body.firstname;
-	const lastname = req.body.lastname;
-	const website = req.body.website;
-	const update = {
-		'name.first': firstname,
-		'name.last': lastname,
-		website,
-	};
-	User.findOneAndUpdate({ username: username }, update, { new: true })
-		.then((savedData) => {
-			console.log(savedData);
+	const { firstname, lastname, website, cameras, lenses, biography } = req.body;
+	User.findOneAndUpdate(
+		{ username },
+		{ $set: { 'name.first': firstname, 'name.last': lastname, website, biography, cameras, lenses } }
+	)
+		.then((savedInfo) => {
+			console.log(savedInfo);
 			res.redirect(`/users/${username}/profile`);
 		})
 		.catch((error) => {
@@ -61,14 +57,13 @@ exports.displayUserDetails = async (req, res) => {
 				title: `User profile for ${foundUser.username}`,
 				user: res.locals.loggedInUser,
 				isAuthenticated: res.locals.isAuthenticated,
+				associatedUser: foundUser,
 			});
 		})
 		.catch((error) => {
 			console.log(error);
 		});
 };
-
-exports.completeUserProfile = (req, res) => {};
 
 /* DELETE */
 exports.deleteAccount = async (req, res, next) => {
