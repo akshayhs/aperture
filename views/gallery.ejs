@@ -18,12 +18,15 @@
   <div class="row p-3">
      <div class="card-deck">
        <% for(image of images) { %>
-        <div class="card" style="width: 18.0rem">
+        <div class="card <%= image.createdBy.username === user.username ? 'bg-light border-1 border-dark' : '' %>" style="width: 18.0rem">
           <img src="<%= image.path %>" alt="<%= image.title %>" class="card-img-top">
           <div class="card-body">
-            <h5 class="card-title"><%= image.title %></h5>
-            <p class="card-text"><%= image.description %></p>
-            <p class="card-text"><small class="text-muted">By <%= image.createdBy.name.first %>&nbsp;<%= image.createdBy.name.last %></small></p>
+            <h5 class="card-title text-center"><%= image.title %></h5>
+            <% if(isAuthenticated && image.createdBy._id.toString() === user._id.toString()) { %>
+              <p class="card-text text-center""><small class="text-muted">You uploaded this image on <%= image.createdAt.getDate()%>/<%= image.createdAt.getMonth()%>/<%= image.createdAt.getFullYear()%></small></p>
+            <% } else { %>
+              <p class="card-text text-center""><small class="text-muted">By <a href="/users/<%=image.createdBy.username%>" target="_blank"><%= image.createdBy.name.first %>&nbsp;<%= image.createdBy.name.last %></a> on <%= image.createdAt.getDate()%>/<%= image.createdAt.getMonth()%>/<%= image.createdAt.getFullYear()%></small></p>
+            <% }%> 
             <div class="div col row">
               <a href="/gallery/<%= image._id %>" class="btn btn-info">Details</a>
               <% if(isAuthenticated && image.createdBy._id.toString() === user._id.toString())  { %>
