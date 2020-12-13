@@ -83,6 +83,8 @@ exports.displayAbout = (req, res) => {
 };
 
 exports.displayGallery = async (req, res) => {
+	let successMessage = req.flash('deleteSuccess');
+	if (successMessage.length === 0) successMessage = null;
 	await Image.find()
 		.populate('createdBy')
 		.then((images) => {
@@ -92,6 +94,7 @@ exports.displayGallery = async (req, res) => {
 				isAuthenticated: res.locals.isAuthenticated,
 				csrfToken: res.locals.csrfToken,
 				images: images,
+				success: successMessage,
 			});
 		})
 		.catch((error) => {
@@ -133,5 +136,7 @@ exports.displayContact = async (req, res) => {
 };
 
 exports.catchAll = (req, res) => {
-	res.status(404).send('No such route! Redirecting to homepage within 5 seconds...');
+	setTimeout(() => {
+		res.redirect('/');
+	}, 2000);
 };
