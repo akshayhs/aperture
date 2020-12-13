@@ -1,7 +1,7 @@
 const multer = require('../config/multer');
 const Image = require('../models/image');
 const User = require('../models/user');
-const Comment = require('../models/imagecomment');
+const Critique = require('../models/imagecomment');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -71,7 +71,7 @@ exports.addUserComment = (req, res) => {
 	const imageId = req.params.id;
 	const user = res.locals.loggedInUser;
 	const critique = req.body.comment;
-	const comment = new Comment({ imageId, user, comment: critique });
+	const comment = new Critique({ imageId, user, comment: critique });
 	comment
 		.save()
 		.then((savedComment) => {
@@ -103,7 +103,7 @@ exports.displayImage = (req, res) => {
 		.then((image) => {
 			/* Redirect if no image found with the associated ID */
 			if (!image) return res.redirect('/gallery');
-			console.log(image);
+			console.log(image.critiques);
 			res.render('./image/details', {
 				title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
 				user: res.locals.loggedInUser,
@@ -140,5 +140,20 @@ exports.displayImagesByTags = (req, res) => {
 			images: images,
 			tag: tag,
 		});
+	});
+};
+
+/* DELETE */
+exports.deleteImage = (req, res) => {
+	const id = req.params.id;
+	Image.findByIdAndDelete({ _id: id }).then((foundImage) => {
+		/* Return back to gallery if image does not exist */
+		if (!foundImage) return res.redirect('/gallery');
+		console.log(foundImage);
+		req.flash(
+			'deleteSuccess',
+			'The image you added has been successfully deleted. It is no longer accessible by anyone.'
+		);
+		return res.redirect('/gallery');
 	});
 };
