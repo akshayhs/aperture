@@ -1,7 +1,7 @@
 <%- include('./partials/header') %>
 <%- include('./partials/nav') %>
-<div class="container my-3">
-  <h1>Gallery</h1>
+<div class="container my-3">  
+  <h1>Gallery</h1>  
   <% if(isAuthenticated) { %>
     <div class="row p-3 d-flex justify-content-center">
       <a href="/gallery/upload" class="btn btn-info h5 font-weight-bold text-uppercase">add your image</a>
@@ -19,12 +19,44 @@
             <h5 class="card-title"><%= image.title %></h5>
             <p class="card-text"><%= image.description %></p>
             <p class="card-text"><small class="text-muted">By <%= image.createdBy.name.first %>&nbsp;<%= image.createdBy.name.last %></small></p>
-            <a href="/gallery/<%= image._id %>" class="btn btn-info">Details</a>
+            <div class="div col row">
+              <a href="/gallery/<%= image._id %>" class="btn btn-info">Details</a>
+              <% if(image.createdBy._id.toString() === user._id.toString())  { %>
+                <!-- Delete confirmation modal button -->
+                <button class="btn btn-danger ml-3" data-toggle="modal" data-target="#deleteimage">Delete</button>
+                <!-- Delete confirmation modal display -->
+                <div class="modal fade" id="deleteimage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content border-1 border-danger">
+                      <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title font-weight-bold" id="exampleModalLongTitle">Are you sure you want to delete?</h5>
+                        <button type="button" class="close text-white font-weight-bold" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <span class="font-weight-bold">Deleting an image is a permanent process</span>.&nbsp;Once an image is deleted from the website, it is no longer accessible by anyone, including you, the author.&nbsp;In addition to it, all critiques added by other users will also be deleted.<br><br><span class="font-weight-bold">Deleted images cannot be restored manually in any circumstances</span>.<br><br>Keeping this mind, please confirm if you wish to proceed with deleting the image.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Go back</button>
+                        <form action="/gallery/<%= image.id %>" method="POST">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button id="btn_delete" type="submit" class="btn btn-danger ml-2 font-weight-bold">Confirm deletion</button>
+                        </form>    
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
           </div>
         </div>
        <% } %>
      </div>
   </div>
-
 </div>
+<script>
+  const button = document.getElementById('btn_delete');
+  console.log(button);
+</script>
 <%- include('./partials/footer') %>
