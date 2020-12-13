@@ -1,8 +1,7 @@
 const multer = require('../config/multer');
-const image = require('../models/image');
 const Image = require('../models/image');
-const user = require('../models/user');
 const User = require('../models/user');
+const Comment = require('../models/imagecomment');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -68,6 +67,25 @@ exports.attemptUpload = (req, res) => {
 	});
 };
 
+exports.addUserComment = (req, res) => {
+	const imageId = req.params.id;
+	const user = res.locals.loggedInUser;
+	const critique = req.body.comment;
+	const comment = new Comment({ imageId, user, comment: critique });
+	comment
+		.save()
+		.then((savedComment) => {
+			return Image.findByIdAndUpdate({ _id: imageId }, { $push: { critiques: savedComment._id } });
+		})
+		.then((information) => {
+			console.log(information);
+			res.redirect(`/gallery/${imageId}`);
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
+
 /* READ */
 exports.displayUploadForm = (req, res) => {
 	res.render('./image/upload', {
@@ -80,16 +98,18 @@ exports.displayUploadForm = (req, res) => {
 
 exports.displayImage = (req, res) => {
 	const id = req.params.id;
-	Image.findOne({ _id: req.params.id })
-		.populate('createdBy')
+	Image.findOne({ _id: id })
+		.populate('createdBy critiques')
 		.then((image) => {
 			/* Redirect if no image found with the associated ID */
 			if (!image) return res.redirect('/gallery');
+			console.log(image);
 			res.render('./image/details', {
 				title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
 				user: res.locals.loggedInUser,
 				isAuthenticated: res.locals.isAuthenticated,
 				image: image,
+				critiques: image.critiques,
 			});
 		})
 		.catch((error) => {

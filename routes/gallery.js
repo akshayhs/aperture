@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/upload', auth, controller.displayUploadForm);
 router.get('/categories/:category', controller.displayImagesByCategory);
 router.get('/tags/:tag', controller.displayImagesByTags);
+router.post('/:id/comment', controller.addUserComment);
 router.get('/:id', controller.displayImage);
 router.post('/', controller.attemptUpload);
 
