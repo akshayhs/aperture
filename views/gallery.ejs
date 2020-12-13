@@ -43,7 +43,7 @@
                         <span class="font-weight-bold">Deleting an image is a permanent process</span>.&nbsp;Once an image is deleted from the website, it is no longer accessible by anyone, including you, the author.&nbsp;In addition to it, all critiques added by other users will also be deleted.<br><br><span class="font-weight-bold">Deleted images cannot be restored manually in any circumstances</span>.<br><br>Keeping this mind, please confirm if you wish to proceed with deleting the image.
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Go back</button>
+                        <button type="button" class="btn btn-warning font-weight-bold" data-dismiss="modal">Go back</button>
                         <form action="/gallery/<%= image.id %>" method="POST">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                           <button id="btn_delete" type="submit" class="btn btn-danger ml-2 font-weight-bold">Confirm deletion</button>
