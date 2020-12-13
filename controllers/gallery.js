@@ -112,7 +112,6 @@ exports.displayImage = (req, res) => {
 		.then((image) => {
 			/* Redirect if no image found with the associated ID */
 			if (!image) return res.redirect('/gallery');
-			console.log(image.critiques);
 			res.render('./image/details', {
 				title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
 				user: res.locals.loggedInUser,
@@ -220,7 +219,6 @@ exports.editImageDetails = (req, res) => {
 				{ new: true }
 			)
 				.then((image) => {
-					console.log(image);
 					res.redirect(`/gallery/${id}`);
 				})
 				.catch((error) => {
