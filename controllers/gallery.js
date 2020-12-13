@@ -88,11 +88,14 @@ exports.addUserComment = (req, res) => {
 
 /* READ */
 exports.displayUploadForm = (req, res) => {
+	let errorMessage = req.flash('sizeError');
+	if (errorMessage.length === 0) errorMessage = null;
 	res.render('./image/upload', {
 		title: 'Upload your image',
 		csrfToken: req.csrfToken(),
 		user: res.locals.loggedInUser,
 		isAuthenticated: res.locals.isAuthenticated,
+		error: errorMessage,
 	});
 };
 
