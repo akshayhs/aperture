@@ -3,13 +3,13 @@
 <div class="container my-3 p-3">
   <h1>Add your image</h1>
   <!-- Image upload Form -->
-  <form class="card p-5 my-3" action="/gallery/?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
+  <form class="card p-5 my-3" action="/gallery/<%= image.id %>/?_method=PATCH&_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
     <!-- Image upload field -->
     <div class="row">
       <div class="col">
         <div class="form-group">
           <label class="font-weight-bold text-capitalize" for="image">select an image</label>
-          <input class="form-control-file my-1" type="file" name="image" id="image" required>
+          <input class="form-control-file my-1" type="file" name="image" id="image">
         </div>
       </div>
       <div class="col">
