@@ -1,7 +1,12 @@
 <%- include('./partials/header') %>
 <%- include('./partials/nav') %>
-<div class="container my-3">  
-  <h1>Gallery</h1>  
+<div class="container my-3">
+  <h1>Gallery</h1>
+  <% if(error) { %>
+    <div class="row d-flex justify-content-center">
+      <p class="text-success font-weight-bold"><%= error %></p>
+    </div>
+  <% } %>
   <% if(isAuthenticated) { %>
     <div class="row p-3 d-flex justify-content-center">
       <a href="/gallery/upload" class="btn btn-info h5 font-weight-bold text-uppercase">add your image</a>
@@ -21,7 +26,7 @@
             <p class="card-text"><small class="text-muted">By <%= image.createdBy.name.first %>&nbsp;<%= image.createdBy.name.last %></small></p>
             <div class="div col row">
               <a href="/gallery/<%= image._id %>" class="btn btn-info">Details</a>
-              <% if(image.createdBy._id.toString() === user._id.toString())  { %>
+              <% if(isAuthenticated && image.createdBy._id.toString() === user._id.toString())  { %>
                 <!-- Delete confirmation modal button -->
                 <button class="btn btn-danger ml-3" data-toggle="modal" data-target="#deleteimage">Delete</button>
                 <!-- Delete confirmation modal display -->
