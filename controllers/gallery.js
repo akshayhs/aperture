@@ -25,8 +25,9 @@ exports.attemptUpload = (req, res) => {
 		if (error) {
 			res.status(500);
 			if (error.code == 'LIMIT_FILE_SIZE') {
-				error.message = 'The uploaded file size is too large. Allowed file size is 250KB';
+				error.message = 'The uploaded file size is too large as it exceeds the permitted limit of 250KB';
 				error.success = false;
+				req.flash('sizeError', `${error.message}`);
 				return res.redirect('/gallery/upload');
 			}
 		} else if (copyright !== 'on') {
