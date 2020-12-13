@@ -2,6 +2,7 @@ const multer = require('../config/multer');
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
+const { update } = require('../models/user');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -127,7 +128,6 @@ exports.displayImage = (req, res) => {
 
 exports.displayImageEditForm = (req, res) => {
 	const id = req.params.id;
-	const image = req.file;
 	Image.findById({ _id: id }).then((image) => {
 		res.render('./image/edit', {
 			title: 'Edit image details',
@@ -161,6 +161,72 @@ exports.displayImagesByTags = (req, res) => {
 			images: images,
 			tag: tag,
 		});
+	});
+};
+
+/* UPDATE */
+exports.editImageDetails = (req, res) => {
+	const id = req.params.id;
+	const newImage = req.file;
+	const {
+		category,
+		title,
+		description,
+		tags,
+		camera,
+		lens,
+		exposure,
+		shutterspeed,
+		copyright,
+		pptechniques,
+		sensitivity,
+	} = req.body;
+	const tagsToAdd = tags.split(',');
+	multer(req, res, (error) => {
+		if (error) {
+			res.status(500);
+			if (error.code == 'LIMIT_FILE_SIZE') {
+				error.message = 'The uploaded file size is too large as it exceeds the permitted limit of 250KB';
+				error.success = false;
+				req.flash('sizeError', `${error.message}`);
+				return res.redirect('/gallery/upload');
+			}
+		} else if (copyright !== 'on') {
+			req.flash('consentError', 'The consent box must be checked. Please check the box to upload the image.');
+			return res.redirect('/gallery/upload');
+		} else {
+			const updatedImageDetails = {
+				title,
+				category,
+				description,
+				tags: tagsToAdd,
+				camera,
+				lens,
+				exposure,
+				shutterspeed,
+				copyright: true,
+				pptechniques,
+				sensitivity,
+			};
+			/* Only add a new file if found in the request object */
+			if (newImage) {
+				updatedImageDetails.path = newImage.path;
+			}
+			Image.findByIdAndUpdate(
+				{ _id: id },
+				{
+					$set: updatedImageDetails,
+				},
+				{ new: true }
+			)
+				.then((image) => {
+					console.log(image);
+					res.redirect(`/gallery/${id}`);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
 	});
 };
 
