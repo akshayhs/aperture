@@ -1,0 +1,91 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container my-3 p-3">
+  <h1>Add your image</h1>
+  <!-- Image upload Form -->
+  <form class="card p-5 my-3" action="/gallery/?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
+    <!-- Image upload field -->
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label class="font-weight-bold text-capitalize" for="image">select an image</label>
+          <input class="form-control-file my-1" type="file" name="image" id="image" required>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="category" class="font-weight-bold text-capitalize">category</label>
+          <select class="form-control" name="category" id="category">
+            <option value="<%= image.category %>">Please choose a suitable category</option>
+            <option class="text-capitalize" value="abstract">abstract</option>
+            <option class="text-capitalize" value="creative">creative</option>
+            <option class="text-capitalize" value="landscape">landscape</option>
+            <option class="text-capitalize" value="monochrome">monochrome</option>
+            <option class="text-capitalize" value="nature">nature</option>
+            <option class="text-capitalize" value="open">open</option>
+            <option class="text-capitalize" value="pictorial">pictorial</option>
+            <option class="text-capitalize" value="street">street</option>
+            <option class="text-capitalize" value="travel">travel</option>
+          </select>
+        </div>
+      </div>
+    </div>   
+    <hr class="border-secondary my-3" style="opacity:0.25;"> 
+    <!-- Image title -->
+    <h5 class="text-capitalize font-weight-bold my-2">image details</h5>
+    <div class="form-group my-3">
+      <label for="title" class="font-weight-bold text-capitalize">title</label>
+      <input class="form-control" type="text" name="title" id="title" placeholder="Choose a suitable image" value="<%= image.title %>" required>
+    </div>
+    <!-- Image description -->
+    <div class="form-group my-3">
+      <label for="description" class="font-weight-bold text-capitalize">description</label>
+      <textarea class="form-control" style="overflow-y: scroll; resize: none;" name="description" id="description" cols="30" rows="10" autocapitalize="sentences" spellcheck="default" required><%= image.description %></textarea>
+    </div>    
+    <!-- Tags -->
+    <div class="form-group my-3">
+      <label for="tags" class="font-weight-bold text-capitalize">Tags</label>
+      <input type="text" name="tags" id="tags" class="form-control" placeholder="Separate each tag with a comma (,)" value="<%= image.tags%>" required>
+    </div>
+    <hr class="border-secondary my-3" style="opacity:0.25;">
+    <h5 class="text-capitalize font-weight-bold my-3">technical details</h5>
+    <div class="form-group">
+      <div class="row">
+        <div class="col my-2">
+          <label for="camera" class="font-weight-bold text-capitalize">camera information</label>
+          <input class="form-control" type="text" name="camera" id="camera" value="<%= image.lens%>" required>
+        </div>
+        <div class="col my-2">
+          <label for="lens" class="font-weight-bold text-capitalize">lens information</label>
+          <input class="form-control" type="text" name="lens" id="lens" value="<%= image.lens%>" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row">
+        <div class="col my-2">
+          <label for="exposure" class="font-weight-bold text-capitalize">Exposure</label>
+          <input type="text" name="exposure" id="exposure" class="form-control" value="<%= image.exposure %>" required>
+        </div>
+        <div class="col my-2">
+          <label for="shutterspeed" class="font-weight-bold text-capitalize">Shutter speed</label>
+          <input type="text" name="shutterspeed" id="shutterspeed" class="form-control" value="<%= image.shutterspeed %>" required>
+        </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pptechniques" class="font-weight-bold text-capitalize">Post-processing information <em>(optional)</em></label>
+        <textarea class="form-control" name="pptechniques" style="overflow-y: scroll; resize: none;" id="pptechniques" cols="30" rows="5"><%= image.pptechniques%></textarea>
+      </div>
+      <div class="form-group ml-4">
+        <input type="checkbox" class="form-check-input" name="copyright" id="copyright" checked required>
+        <label for="copyright" class="font-weight bold form-check-label">I hereby confirm that I am the sole author of the the image above and agree to cooperate with the platform in case of any copyright infringement claims.</label>
+      </div>
+      <div class="form-group my-4">     
+      <button type="submit" class="btn btn-info font-weight-bold text-capitalize mr-2">Add image</button>
+        <button type="reset" class="btn btn-warning text-capitalize font-weight-bold ml-2">Reset</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+<%- include('../partials/footer') %></div>
