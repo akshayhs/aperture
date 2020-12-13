@@ -31,6 +31,7 @@ exports.attemptUpload = (req, res) => {
 				return res.redirect('/gallery/upload');
 			}
 		} else if (copyright !== 'on') {
+			req.flash('consentError', 'The consent box must be checked. Please check the box to upload the image.');
 			return res.redirect('/gallery/upload');
 		} else {
 			const image = new Image({
@@ -90,13 +91,16 @@ exports.addUserComment = (req, res) => {
 /* READ */
 exports.displayUploadForm = (req, res) => {
 	let errorMessage = req.flash('sizeError');
+	let consentMessage = req.flash('consentError');
 	if (errorMessage.length === 0) errorMessage = null;
+	if (consentMessage.length === 0) consentMessage = null;
 	res.render('./image/upload', {
 		title: 'Upload your image',
 		csrfToken: req.csrfToken(),
 		user: res.locals.loggedInUser,
 		isAuthenticated: res.locals.isAuthenticated,
 		error: errorMessage,
+		consentError: consentMessage,
 	});
 };
 
@@ -123,6 +127,7 @@ exports.displayImage = (req, res) => {
 
 exports.displayImageEditForm = (req, res) => {
 	const id = req.params.id;
+	const image = req.file;
 	Image.findById({ _id: id }).then((image) => {
 		res.render('./image/edit', {
 			title: 'Edit image details',
