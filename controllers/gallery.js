@@ -121,6 +121,18 @@ exports.displayImage = (req, res) => {
 		});
 };
 
+exports.displayImageEditForm = (req, res) => {
+	const id = req.params.id;
+	Image.findById({ _id: id }).then((image) => {
+		res.render('./image/edit', {
+			title: 'Edit image details',
+			user: res.locals.loggedInUser,
+			isAuthenticated: res.locals.isAuthenticated,
+			image: image,
+		});
+	});
+};
+
 exports.displayImagesByCategory = (req, res) => {
 	const category = req.params.category;
 	Image.find({ category: category }).populate('createdBy').then((images) => {
