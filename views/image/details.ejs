@@ -85,7 +85,12 @@
       </div>
     </div>
   </div>
-  <hr>  
+  <hr>
+  <% if(!isAuthenticated) { %>
+  <div class="row col d-flex justify-content-start col-sm-12">
+    <p class="font-weight-bold text-danger"><i class="fas fa-exclamation-triangle"></i>&nbsp;Only registered users may critique images.&nbsp;<a class="font-weight-bold btn-sm text-capitalize btn btn-info" href="/auth/register" target="_blank" rel="noopener noreferrer">Create an account?</a></p>
+  </div>
+  <% } %> 
   <!-- Comment box and comment guidelines-->
   <div class="row my-3">
     <div class="col-12 col-sm-12 col-md-12 col-lg-6">
@@ -164,5 +169,25 @@
     </div>
     <% } %>
   </div>  
+  <!-- Comments -->
+  <div class="row my-3">
+    <div class="col col-12">
+      <% critiques.forEach(critique => { %>
+        <div class="row">
+          <div class="col col-lg-12">
+            <div class="card w-100 my-2 p-3">
+              <div class="media">                
+                <div class="media-body">
+                  <h5 class="mt-0"><%= critique.comment %></h5>
+                  <p class="mt-0 small">on <%= critique.createdAt.getDate()%>/<%= critique.createdAt.getMonth()+1%>/<%= critique.createdAt.getFullYear()%> at <%= critique.createdAt.getHours()%>:<%= critique.createdAt.getMinutes()%>:<%= critique.createdAt.getSeconds()%></>
+                    <p><%= critique.user %></p>
+                </div>
+              </div>  
+            </div>       
+          </div>
+        </div>
+      <% }) %>
+    </div> 
+  </div>
 </div>
 <%- include('../partials/footer') %>
