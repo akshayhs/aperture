@@ -1,6 +1,8 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
+const router = require('../routes/blog');
+const { update } = require('../models/blog');
 
 /* CREATE */
 
@@ -80,7 +82,18 @@ exports.displayEditForm = (req, res) => {
 };
 
 /* UPDATE */
-
+exports.editBlog = (req, res) => {
+	const id = req.params.id;
+	const { title, abstract, description } = req.body;
+	Blog.findByIdAndUpdate(
+		{ _id: id },
+		{ $set: { title, abstract, description } },
+		{ new: true }
+	).then((updatedBlog) => {
+		console.log(updatedBlog);
+		res.redirect(`/blogs/${id}`);
+	});
+};
 /* DELETE */
 exports.deleteBlog = (req, res) => {
 	const id = req.params.id;

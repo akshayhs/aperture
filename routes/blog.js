@@ -8,6 +8,7 @@ router.post('/success', controller.saveBlog);
 router.get('/add', auth, controller.createBlog);
 router.post('/:id/comment', auth, controller.addUserComment);
 router.get('/:id/delete', auth, controller.deleteBlog);
+router.patch('/:id', controller.editBlog);
 router.get('/:id/edit', controller.displayEditForm);
 router.get('/:id', controller.displayBlog);
 
