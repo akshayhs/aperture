@@ -42,7 +42,6 @@ exports.addUserComment = (req, res) => {
 };
 
 /* READ */
-
 exports.createBlog = (req, res) => {
 	res.status(200).render('./blog/add', {
 		title: 'Add your blog',
@@ -60,6 +59,19 @@ exports.displayBlog = (req, res) => {
 		}
 		res.status(200).render('./blog/display', {
 			title: `${blog.title}`,
+			isAuthenticated: res.locals.isAuthenticated,
+			user: res.locals.loggedInUser,
+			blog: blog,
+		});
+	});
+};
+
+exports.displayEditForm = (req, res) => {
+	const id = req.params.id;
+	Blog.findById({ _id: id }).then((blog) => {
+		res.status(200).render('./blog/edit', {
+			title: 'Edit your blog',
+			csrfToken: res.locals.csrfToken,
 			isAuthenticated: res.locals.isAuthenticated,
 			user: res.locals.loggedInUser,
 			blog: blog,
