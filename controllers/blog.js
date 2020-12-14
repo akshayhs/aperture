@@ -102,7 +102,11 @@ exports.deleteBlog = (req, res) => {
 			if (!blog) {
 				return;
 			}
-			res.status(200).redirect('/');
+			req.flash(
+				'deleteSuccess',
+				'The blog you previously posted has been successfully deleted. It is no longer accessible by anyone.'
+			);
+			res.status(200).redirect('/blogs');
 		})
 		.catch((error) => {
 			console.log(error);
