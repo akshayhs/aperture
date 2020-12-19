@@ -18,15 +18,20 @@
       </li>
       <li class="nav-item">
         <a href="/members" class="nav-link">Members</a>
-      </li>        
-      <form class="form-inline mx-5 my-2 my-lg-0">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-light mx-2 my-2 my-sm-0" type="submit">Search</button>
-      </form>
+      </li>              
     </ul>
     <% if(isAuthenticated) { %>
-      <a class="nav-link text-white">Hi&nbsp;<%= user.name.first ? user.name.first : user.username %>!</a>    
+      <div class="dropdown mr-3">
+        <button class="btn btn-dark dropdown-toggle" type="button" id="userprofileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Hi&nbsp;<%= user.name? user.name.first : user.username %>!
+        </button>
+        <div class="dropdown-menu" aria-labelledby="userprofileDropdown">
+          <a class="dropdown-item" target="_blank" href="/users/<%= user.username%>/profile">Your profile</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </div>
+      <!-- <a class="nav-link text-white">Hi&nbsp;<%= user.name ? user.name.first : user.username %>!</a>     -->
       <a href="/auth/logout" class="btn btn-warning text-dark"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</a>    
     <% } else { %>
       <a href="/auth/login" class="nav-link text-white"><i class="fas fa-user-lock"></i>&nbsp;Log in</a>    
