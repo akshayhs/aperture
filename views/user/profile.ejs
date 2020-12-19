@@ -14,11 +14,14 @@
     </div>
     <div class="col-lg-8">
       <div class="card bg-light p-5">
+        <% if(updateSuccess) { %>
+          <p class="text-center text-white font-weight-bold bg-success"><%= updateSuccess %></p>
+        <% } %>
         <h5 class="text-capitalize font-weight-bold">basic information</h5>
       <div class="row">
         <div class="col-lg-4 my-3"><strong>Avatar</strong>
         <div class="row col">
-          <img src="<%= user.avatar ? user.avatar : '../uploads/avatar/default.jpeg' %>" height="150" width="150" alt="Avatar for <%= user.username %>" class="my-3 rounded-circle d-block border border-dark">
+          <img src="<%= user.avatar %>" height="150" width="150" alt="Avatar for <%= user.username %>" class="my-3 rounded-circle d-block border border-dark">
         </div>
         <div class="row p-3 small"><i>Updated on: <span class="font-weight-bold"><%= user.updatedAt.toLocaleDateString('en-IN', {year: 'numeric', month: 'short', day: 'numeric'})%> at <%= user.updatedAt.toLocaleTimeString('en-IN')%></span></i></div>               
       </div>
@@ -36,11 +39,11 @@
         <div class="row my-3">
           <div class="col">
             <label class="font-weight-bold text-capitalize" for="firstname">first name</label>
-            <p class="form-control"><%= user.name.first %></p>
+            <p class="form-control"></p>
           </div>
           <div class="col">
             <label for="lastname" class="font-weight-bold text-capitalize">last name</label>
-            <p class="form-control"><%= user.name.last %></p>
+            <p class="form-control"></p>
           </div>
         </div>
         <div class="row my-3">
@@ -52,23 +55,23 @@
         <div class="row my-3">
           <div class="col">
             <label class="font-weight-bold text-capitalize">website</label>
-            <p class="form-control"><%= user.website %></p>
+            <p class="form-control"><%= user.website || '' %></p>
           </div>
         </div>        
       </div>      
       </div>
       <div class="row p-3 my-3">
         <label class="font-weight-bold text-capitalize">about you</label>
-        <p class="form-control"><%= user.biography %></p>
+        <p class="form-control"><%= user.biography ? user.biography : '' %></p>
       </div>
       <div class="row p-3 my-3">
         <div class="col">
           <label for="cameras" class="font-weight-bold text-capitalize">cameras</label>
-          <input type="text" name="cameras" id="cameras" value="<%= user.cameras%>" class="form-control">
+          <input type="text" name="cameras" id="cameras" value="<%= user.cameras ? user.cameras : ''  %>" class="form-control">
         </div>
         <div class="col">
           <label for="lenses" class="font-weight-bold text-capitalize">lenses</label>
-          <input type="text" name="lenses" id="lenses" value="<%= user.lenses%>" class="form-control">
+          <input type="text" name="lenses" id="lenses" value="<%= user.lenses ? user.lenses : '' %>" class="form-control">
         </div>
       </div>
     </div>
@@ -85,7 +88,8 @@
             <li>This action is irreversible - once your data has been deleted from our servers, we cannot recover it manually again.</li>
             <li>You hereby acknowledge that deleting an account is an instant process. Once the button below is clicked, you will be logged out of this website and be redirected to the main page.</li>
           </ul>
-          <form action="/users/profile/<%= user.username %>/delete" method="POST">
+          <form action="/users/<%= user.username %>/?_method=DELETE" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn btn-danger font-weight-bold text-uppercase" type="submit">delete account</button>
           </form>
         </div>        
