@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container my-3">
+  <div class="row p-3">
+    <h3 class="text-capitalize">your images</h3>
+  </div>
+  <div class="row p-3 my-3">
+    <table class="table text-center table-bordered table-hover">
+      <thead class="bg-dark text-white">
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Title</th>
+          <th scope="col">Date created</th>
+          <th scope="col">Details</th>
+          <th scope="col">Comments</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% images.forEach(image => { %>
+        <tr>
+          <th scope="row"><img height="30" src="<%= image.path %>" alt="image titled <%= image.title %>"></th>
+          <td class="font-weight-bold"><%= image.title %></td>
+          <td><%= image.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})%></td>
+          <td><a class="btn btn-info btn-sm text-capitalize font-weight-bold" href="/gallery/<%= image._id%>">details</a></td>
+          <td><%= image.critiques.length %></td>
+          <td><a href="/gallery/<%= image._id %>/edit" class="btn btn-sm btn-warning mr-1 font-weight-bold"><i class="fas fa-edit"></i></a>
+            <a href="/gallery/<%= image._id %>" class="btn btn-sm btn-danger ml-1 font-weight-bold"><i class="fas fa-trash text-white"></i></a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>      
+</div>
+</div>
+<%- include('../partials/footer') %>
