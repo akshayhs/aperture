@@ -13,7 +13,7 @@ exports.createAccount = (req, res) => {
 		.then((foundUser) => {
 			/* Reject account creation if details already exist */
 			if (foundUser) {
-				req.flash('error', 'The entered username already exists. Please choose a new username');
+				req.flash('error', 'The entered username/email already exists. Please choose a new username');
 				return res.redirect('/auth/register');
 			}
 			/* Reject account creation if password fields do not match */
@@ -35,12 +35,17 @@ exports.createAccount = (req, res) => {
 			return user.save();
 		})
 		.then((newUser) => {
-			res.redirect('/');
+			req.session.isLoggedIn = true;
+			req.session.user = newUser;
+			req.session.save((error) => {
+				if (error) console.log(error);
+				res.redirect(`/users/${newUser.username}/profile/complete`);
+			});
 			const email = {
 				to: `${newUser.email}`,
 				from: 'ak.prodigy24@gmail.com',
 				subject: 'Welcome to aperture!',
-				html: '<p>Get started!</p>',
+				html: '<p>Get started!</p><br><br><p><a href="/auth/login" Login to your account now!</p>',
 			};
 			transporter.sendMail(email, (error, success) => {
 				if (error) console.log(error);
