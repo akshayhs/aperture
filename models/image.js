@@ -29,10 +29,18 @@ const imageSchema = new Schema(
 				'street',
 				'travel',
 			],
+			trim: true,
 		},
 		title: {
 			type: String,
 			required: true,
+			trim: true,
+		},
+		caption: {
+			type: String,
+			required: true,
+			maxlength: 140,
+			trim: true,
 		},
 		description: {
 			type: String,
@@ -40,26 +48,32 @@ const imageSchema = new Schema(
 		},
 		tags: {
 			type: Array,
+			trim: true,
 		},
 		camera: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		lens: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		exposure: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		shutterspeed: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		sensitivity: {
 			type: Number,
 			required: true,
+			trim: true,
 		},
 		pptechniques: {
 			type: String,
