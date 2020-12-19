@@ -52,13 +52,33 @@ exports.displayUserDetails = async (req, res) => {
 	const username = req.params.username;
 	await User.findOne({ username: username })
 		.then((foundUser) => {
-			if (!foundUser) return res.redirect('/user/auth/login');
+			if (!foundUser) return res.status(422).redirect('/user/auth/login');
 			res.render('./user/details', {
-				title: `User profile for ${foundUser.username}`,
+				title: `User profile for ${foundUser.name.first} ${foundUser.name.last}`,
 				user: res.locals.loggedInUser,
 				isAuthenticated: res.locals.isAuthenticated,
 				associatedUser: foundUser,
 			});
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
+
+/* UPDATE */
+exports.saveUserDetails = async (req, res) => {
+	const username = req.params.username;
+	const { firstname, lastname, website, biography, cameras, lenses } = req.body;
+	const image = req.file;
+	await User.findOneAndUpdate(
+		{ username },
+		{ $set: { firstname, lastname, website, biography, cameras, lenses, avatar: image.path } },
+		{ new: true }
+	)
+		.then((user) => {
+			console.log(user);
+			req.flash('updateSuccess', 'Your details were saved successfully.');
+			res.redirect(`/users/${username}/profile`);
 		})
 		.catch((error) => {
 			console.log(error);
