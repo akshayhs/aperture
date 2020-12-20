@@ -34,7 +34,7 @@ exports.addUserComment = (req, res) => {
 		.save()
 		.then((savedComment) => {
 			console.log(savedComment);
-			return Blog.findOneAndUpdate({ _id: id }, { $push: { comments: savedComment._id } });
+			return Blog.findByIdAndUpdate({ _id: id }, { $push: { comments: savedComment._id } });
 		})
 		.then(() => {
 			res.redirect(`/blogs/${id}`);
@@ -51,19 +51,24 @@ exports.createBlog = (req, res) => {
 	});
 };
 
-exports.displayBlog = (req, res) => {
-	const id = req.params.id;
-	Blog.findById({ _id: id }).populate('author').then((blog) => {
-		if (!blog) {
-			return;
-		}
-		res.status(200).render('./blog/display', {
+exports.displayBlog = async (req, res) => {
+	try {
+		let blog = await (await Blog.findById({ _id: req.params.id }))
+			.populate({ path: 'author', model: User })
+			.populate({ path: 'comments', model: Comment })
+			.populate({ path: 'comments', populate: { path: 'author', model: User } })
+			.execPopulate();
+		res.render('./blog/display', {
 			title: `${blog.title}`,
 			isAuthenticated: res.locals.isAuthenticated,
 			user: res.locals.loggedInUser,
 			blog: blog,
+			comments: blog.comments,
+			author: blog.author,
 		});
-	});
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 exports.displayEditForm = (req, res) => {
