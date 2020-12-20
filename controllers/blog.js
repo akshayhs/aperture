@@ -1,15 +1,13 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
-const router = require('../routes/blog');
-const { update } = require('../models/blog');
 
 /* CREATE */
 
 exports.saveBlog = (req, res) => {
 	const author = req.session.user;
-	const { title, abstract, description } = req.body;
-	const blog = new Blog({ title, author, abstract, description });
+	const { title, abstract, description, shorts } = req.body;
+	const blog = new Blog({ title, author, shorts, abstract, description });
 	blog
 		.save()
 		.then((savedBlog) => {
@@ -55,7 +53,7 @@ exports.createBlog = (req, res) => {
 
 exports.displayBlog = (req, res) => {
 	const id = req.params.id;
-	Blog.findById({ _id: id }).then((blog) => {
+	Blog.findById({ _id: id }).populate('author').then((blog) => {
 		if (!blog) {
 			return;
 		}
@@ -95,18 +93,24 @@ exports.editBlog = (req, res) => {
 	});
 };
 /* DELETE */
-exports.deleteBlog = (req, res) => {
+exports.deleteBlog = async (req, res) => {
+	const username = res.locals.loggedInUser.username;
 	const id = req.params.id;
+	/* Find the blog by id
+		Delete the blog from the model first
+		Delete the blog from the associated user
+		Return to blogs page
+	*/
 	Blog.findByIdAndDelete({ _id: id })
-		.then((blog) => {
-			if (!blog) {
-				return;
-			}
+		.then(() => {
+			return User.findOneAndUpdate({ username }, { $pull: { blogs: id } });
+		})
+		.then(() => {
 			req.flash(
 				'deleteSuccess',
 				'The blog you previously posted has been successfully deleted. It is no longer accessible by anyone.'
 			);
-			res.status(200).redirect('/blogs');
+			res.redirect('/blogs');
 		})
 		.catch((error) => {
 			console.log(error);
