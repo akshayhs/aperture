@@ -1,8 +1,10 @@
 const multer = require('../config/multer');
+const fs = require('fs');
+const ObjectId = require('mongoose').Types.ObjectId;
+
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
-const { update } = require('../models/user');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -80,7 +82,7 @@ exports.addUserComment = (req, res) => {
 	comment
 		.save()
 		.then((savedComment) => {
-			return Image.findByIdAndUpdate({ _id: imageId }, { $push: { critiques: savedComment._id } });
+			return Image.findByIdAndUpdate({ _id: imageId }, { $push: { critiques: savedComment._id } }, { new: true });
 		})
 		.then((information) => {
 			console.log(information);
@@ -231,16 +233,23 @@ exports.editImageDetails = (req, res) => {
 };
 
 /* DELETE */
-exports.deleteImage = (req, res) => {
+exports.deleteImage = async (req, res) => {
 	const id = req.params.id;
-	Image.findByIdAndDelete({ _id: id }).then((foundImage) => {
-		/* Return back to gallery if image does not exist */
-		if (!foundImage) return res.redirect('/gallery');
-		console.log(foundImage);
-		req.flash(
-			'deleteSuccess',
-			'The image you added has been successfully deleted. It is no longer accessible by anyone.'
+	const image = await Image.findOne({ _id: id });
+	try {
+		fs.unlink(image.path, (error) => {
+			if (error) console.log(error);
+			console.log(`Image under ${image.title} successfully unlinked`);
+		});
+		await Image.findByIdAndDelete({ _id: id });
+		await User.findOneAndUpdate(
+			{ username: res.locals.loggedInUser.username },
+			{ $pull: { images: id } },
+			{ new: true }
 		);
-		return res.redirect('/gallery');
-	});
+		req.flash('deleteSuccess', 'Your image has been deleted successfully');
+		res.redirect('/gallery');
+	} catch (error) {
+		console.log(error);
+	}
 };
