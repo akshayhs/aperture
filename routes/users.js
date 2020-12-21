@@ -3,6 +3,7 @@ const controller = require('../controllers/users');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
+router.get('/:username/images', controller.displayUserUploadedImages);
 router.delete('/:username', auth, controller.deleteAccount);
 router.patch('/:username/profile', auth, controller.saveUserDetails);
 router.post('/:username/profile', auth, controller.completeUserProfile);
