@@ -97,27 +97,21 @@ exports.editBlog = (req, res) => {
 		res.redirect(`/blogs/${id}`);
 	});
 };
+
 /* DELETE */
 exports.deleteBlog = async (req, res) => {
 	const username = res.locals.loggedInUser.username;
 	const id = req.params.id;
-	/* Find the blog by id
-		Delete the blog from the model first
-		Delete the blog from the associated user
-		Return to blogs page
-	*/
-	Blog.findByIdAndDelete({ _id: id })
-		.then(() => {
-			return User.findOneAndUpdate({ username }, { $pull: { blogs: id } });
-		})
-		.then(() => {
-			req.flash(
-				'deleteSuccess',
-				'The blog you previously posted has been successfully deleted. It is no longer accessible by anyone.'
-			);
-			res.redirect('/blogs');
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+	try {
+		await Blog.findByIdAndDelete({ _id: id });
+		await Comment.findOneAndDelete({ blogId: id });
+		await User.findOneAndUpdate({ username }, { $pull: { blogs: id } }, { new: true });
+		req.flash(
+			'deleteSuccess',
+			'The blog you previously posted has been successfully deleted. It is no longer accessible by anyone.'
+		);
+		return res.redirect('/blogs');
+	} catch (error) {
+		console.log(error);
+	}
 };
