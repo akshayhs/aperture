@@ -25,7 +25,35 @@
           <td><a class="btn btn-info btn-sm text-capitalize font-weight-bold" href="/gallery/<%= image._id%>">details</a></td>
           <td><%= image.critiques.length %></td>
           <td><a href="/gallery/<%= image._id %>/edit" class="btn btn-sm btn-warning mr-1 font-weight-bold"><i class="fas fa-edit"></i></a>
-            <a href="/gallery/<%= image._id %>" class="btn btn-sm btn-danger ml-1 font-weight-bold"><i class="fas fa-trash text-white"></i></a></td>
+            <a href="/gallery/<%= image._id %>" data-toggle="modal" data-target="#deleteimage" class="btn btn-sm btn-danger ml-1 font-weight-bold"><i class="fas fa-trash text-white"></i></a></td>
+            <!-- Delete confirmation modal display -->
+            <div class="modal fade" id="deleteimage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-1 border-danger">
+                  <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title font-weight-bold" id="exampleModalLongTitle">Are you sure you want to delete?</h5>
+                    <button type="button" class="close text-white font-weight-bold" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <span class="font-weight-bold">Deleting an image is a permanent process</span>.&nbsp;Once an image is deleted
+                    from the website, it is no longer accessible by anyone, including you, the author.&nbsp;In addition to it, all
+                    critiques added by other users will also be deleted.<br><br><span class="font-weight-bold">Deleted images cannot
+                      be restored manually in any circumstances</span>.<br><br>Keeping this mind, please confirm if you wish to
+                    proceed with deleting the image.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-warning font-weight-bold" data-dismiss="modal">Go back</button>
+                    <form action="/gallery/<%= image.id %>" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button id="btn_delete" type="submit" class="btn btn-danger ml-2 font-weight-bold">Confirm deletion</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>            
         </tr>
         <% }) %>
       </tbody>
