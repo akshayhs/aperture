@@ -19,7 +19,7 @@ const userSchema = new Schema(
 		},
 		avatar: {
 			type: String,
-			default: '../uploads/images/default.jpeg',
+			default: '/uploads/images/default.jpeg',
 		},
 		email: {
 			type: String,
