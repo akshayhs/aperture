@@ -109,24 +109,32 @@ exports.displayUploadForm = (req, res) => {
 	});
 };
 
-exports.displayImage = (req, res) => {
+exports.displayImage = async (req, res) => {
 	const id = req.params.id;
-	Image.findOne({ _id: id })
-		.populate('createdBy critiques')
-		.then((image) => {
-			/* Redirect if no image found with the associated ID */
-			if (!image) return res.redirect('/gallery');
-			res.render('./image/details', {
-				title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
-				user: res.locals.loggedInUser,
-				isAuthenticated: res.locals.isAuthenticated,
-				image: image,
-				critiques: image.critiques,
-			});
-		})
-		.catch((error) => {
-			console.log(error);
+	try {
+		let image = await Image.findById({ _id: id })
+			.populate({ path: 'createdBy', model: User })
+			.populate({ path: 'critiques', model: Critique })
+			.populate({ path: 'critiques.user', populate: { path: 'user', model: User } });
+		// /* Redirect if no image found with the associated ID */
+		if (!image) {
+			req.flash(
+				'displayError',
+				'The image you are looking for, is not found. Perhaps, it has been deleted by the author.'
+			);
+			return res.redirect('/gallery');
+		}
+		// res.json(image);
+		return res.render('./image/details', {
+			title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
+			user: res.locals.loggedInUser,
+			isAuthenticated: res.locals.isAuthenticated,
+			image: image,
+			critiques: image.critiques,
 		});
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 exports.displayImageEditForm = (req, res) => {
