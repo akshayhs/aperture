@@ -5,6 +5,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
+const { populate } = require('../models/imagecomment');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -113,19 +114,18 @@ exports.displayImage = async (req, res) => {
 	const id = req.params.id;
 	try {
 		let image = await Image.findById({ _id: id })
-			.populate({ path: 'createdBy', model: User })
-			.populate({ path: 'critiques', model: Critique })
-			.populate({ path: 'critiques.user', populate: { path: 'user', model: User } });
-		// /* Redirect if no image found with the associated ID */
-		if (!image) {
-			req.flash(
-				'displayError',
-				'The image you are looking for, is not found. Perhaps, it has been deleted by the author.'
-			);
-			return res.redirect('/gallery');
-		}
-		// res.json(image);
-		return res.render('./image/details', {
+			.populate({
+				path: 'createdBy',
+				select: 'username name.first name.last',
+				model: User,
+			})
+			.populate({
+				path: 'critiques',
+				select: '_id comment createdAt updatedAt',
+				model: Critique,
+				populate: { path: 'user', select: 'username name.first name.last', model: User },
+			});
+		res.render('./image/details', {
 			title: `${image.title} by ${image.createdBy.name.first} ${image.createdBy.name.last}`,
 			user: res.locals.loggedInUser,
 			isAuthenticated: res.locals.isAuthenticated,
