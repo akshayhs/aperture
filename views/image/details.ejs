@@ -170,24 +170,58 @@
     <% } %>
   </div>  
   <!-- Comments -->
-  <div class="row my-3">
-    <div class="col col-12">
-      <% critiques.forEach(critique => { %>
-        <div class="row">
-          <div class="col col-lg-12">
-            <div class="card w-100 my-2 p-3">
-              <div class="media">                
-                <div class="media-body">
-                  <h5 class="mt-0"><%= critique.comment %></h5>
-                  <p class="mt-0 small">on <%= critique.createdAt.getDate()%>/<%= critique.createdAt.getMonth()+1%>/<%= critique.createdAt.getFullYear()%> at <%= critique.createdAt.getHours()%>:<%= critique.createdAt.getMinutes()%>:<%= critique.createdAt.getSeconds()%></>
-                    <p><%= critique.user %></p>
-                </div>
-              </div>  
-            </div>       
-          </div>
+  <div class="row w-100 d-flex justify-content-start p-3">
+    <h5 class="font-weight-bold text-capitalize">critiques</h5>
+  </div>
+  <div class="row w-100 p-3">
+    <% critiques.forEach((critique) => { %>
+      <div class="card w-100 my-3">
+        <div class="card-header font-weight-bold text-left">
+          <%= critique.user.name.first %>&nbsp;<%= critique.user.name.last%>
         </div>
+        <div class="card-body">
+          <h5 class="card-text">
+            <%= critique.comment %>
+          </h5>
+          <% if(isAuthenticated && critique.user._id.toString()=== user._id.toString()) { %>
+            <!-- Edit comment modal button -->
+            <button class="btn btn-info btn-sm text-capitalize font-weight-bold mr-2 align-items-right" data-toggle="modal" data-target="#editcomment"><i
+            class="fas fa-edit"></i>&nbsp;edit</button>           
+            <!-- Delete confirmation modal display -->
+            <div class="modal fade" id="editcomment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-1 border-info">
+                  <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title font-weight-bold text-capitalize" id="exampleModalLongTitle">edit your comment</h5>
+                    <button type="button" class="close text-white font-weight-bold" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/<%= image._id%>/?_csrf=<%= csrfToken %>&_method=PATCH">                     
+                      <label for="updatedComment" class="font-weight-bold text-capitalize">Critique</label>
+                      <textarea autofocus="true" spellcheck="default" style="overflow-y: hidden; resize: none;" name="updatedComment" id="updatedComment" cols="30" rows="5" class="form-control"><%= critique.comment %></textarea>
+                      <div class="form-group my-3 d-row justify-content-end">
+                        <button type="button" class="btn btn-warning font-weight-bold" data-dismiss="modal">Go back</button>
+                        <button id="btn_delete" type="submit" class="btn btn-info ml-2 font-weight-bold text-capitalize">update</button>
+                      </div>
+                    </form>                    
+                  </div>                  
+                </div>
+              </div>
+            </div>
+            <button href="#" class="btn btn-warning btn-sm text-capitalizefont-weight-bold ml-2"><i
+                class="fas fa-trash-alt"></i>&nbsp;delete</button>
+            <% } %>
+        </div>
+        <div class="card-footer text-muted">on
+          <%= critique.createdAt.toLocaleDateString('en-IN', {day: 'numeric' , month: 'short' , year: 'numeric' })%>
+            &nbsp;at&nbsp;<%= critique.createdAt.getHours() %>:<%= critique.createdAt.getMinutes() %>
+        </div>
+      </div>
       <% }) %>
-    </div> 
+  </div>
   </div>
 </div>
 <%- include('../partials/footer') %>
