@@ -4,6 +4,8 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
+router.post('/:id/critiques/:critiqueid', controller.deleteCritique);
+
 router.get('/upload', auth, controller.displayUploadForm);
 router.get('/categories/:category', controller.displayImagesByCategory);
 router.get('/tags/:tag', controller.displayImagesByTags);

@@ -5,7 +5,8 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
-const { populate } = require('../models/imagecomment');
+const { populate, update } = require('../models/imagecomment');
+const image = require('../models/image');
 
 /* CREATE */
 exports.attemptUpload = (req, res) => {
@@ -111,6 +112,10 @@ exports.displayUploadForm = (req, res) => {
 };
 
 exports.displayImage = async (req, res) => {
+	let message = req.flash('critiqueUpdateSuccess');
+	let deleteMessage = req.flash('deleteSuccess');
+	if (message.length === 0) message = null;
+	if (deleteMessage.length === 0) deleteMessage = null;
 	const id = req.params.id;
 	try {
 		let image = await Image.findById({ _id: id })
@@ -131,6 +136,9 @@ exports.displayImage = async (req, res) => {
 			isAuthenticated: res.locals.isAuthenticated,
 			image: image,
 			critiques: image.critiques,
+			csrfToken: res.locals.csrfToken,
+			updatedCritique: message,
+			deleteMessage,
 		});
 	} catch (error) {
 		console.log(error);
@@ -257,6 +265,19 @@ exports.deleteImage = async (req, res) => {
 		);
 		req.flash('deleteSuccess', 'Your image has been deleted successfully');
 		res.redirect('/gallery');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+exports.deleteCritique = async (req, res) => {
+	const critiqueId = req.params.critiqueid;
+	const imageId = req.params.id;
+	try {
+		await Critique.findByIdAndDelete({ _id: critiqueId });
+		await Image.findByIdAndUpdate({ _id: imageId }, { $pull: { critiques: critiqueId } });
+		req.flash('deleteSuccess', 'Your critique has been deleted successfullly.');
+		return res.redirect('`/${gallery}/${imageId}');
 	} catch (error) {
 		console.log(error);
 	}
