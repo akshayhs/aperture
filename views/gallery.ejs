@@ -6,14 +6,22 @@
     <div class="row d-flex justify-content-center">
       <p class="text-success font-weight-bold"><%= success %></p>
     </div>
-  <% } %>
+  <% } else if(displayError) { %>
+    <div class="row d-flex justify-content-center alert alert-danger" role="alert">
+        <%= displayError %>
+    </div>
+  <% }%>
   <% if(isAuthenticated) { %>
     <div class="row p-3 d-flex justify-content-center">
       <a href="/gallery/upload" class="btn btn-info h5 font-weight-bold text-uppercase">add your image</a>
     </div>   
   <% } %>
   <% if(images.length === 0) { %>
-    <p class="text-danger text-center font-weight-bold">Sorry, there are no images uploaded by anyone, yet!</p>
+    <div class="row d-flex justify-content-center">
+      <div class="alert alert-danger font-weight-bold text-center border border-danger border-rounded" role="alert">
+        Sorry, there are no images uploaded by anyone, yet!
+      </div>
+    </div>
   <% } %>
   <div class="row p-3">
      <div class="card-deck">
