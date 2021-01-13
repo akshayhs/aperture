@@ -127,11 +127,17 @@ exports.attemptLogout = (req, res) => {
 };
 
 exports.displayPasswordResetForm = async (req, res) => {
+	let resetSuccess = req.flash('resetRequestSuccess');
+	let resetError = req.flash('userNotFoundError');
+	if (resetSuccess.length === 0) resetSuccess = null;
+	if (resetError.length === 0) resetError = null;
 	res.render('./auth/reset_page', {
 		title: 'Reset your password',
 		csrfToken: res.locals.csrfToken,
 		user: res.locals.loggedInUser,
 		currentYear: new Date().getFullYear(),
+		successMessage: resetSuccess,
+		errorMessage: resetError,
 	});
 };
 
@@ -148,7 +154,7 @@ exports.resetUserPassword = (req, res) => {
 			.then((user) => {
 				if (!user) {
 					req.flash('userNotFoundError', 'No user details were found with the associated email or username');
-					return res.redirect('/auth/login');
+					return res.redirect('/auth/user/password/reset');
 				}
 				user.pwResetToken = token;
 				user.tokenExpiry = Date.now() + 1800000; // Adds 30 minutes before expiring
@@ -159,7 +165,7 @@ exports.resetUserPassword = (req, res) => {
 					'resetRequestSuccess',
 					'Your request has been successfully processed. Please check your email id to reset your password.'
 				);
-				res.redirect('/');
+				res.redirect('/auth/user/password/reset');
 				transporter.sendMail({
 					to: user.email,
 					from: 'ak.prodigy24@gmail.com',
