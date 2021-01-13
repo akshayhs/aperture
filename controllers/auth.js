@@ -173,9 +173,9 @@ exports.resetUserPassword = (req, res) => {
 					html: `<h3>Hey,&nbsp;${user.name.first || user.username}!</h3>
 						<p>We have received a request for resetting your user account password on Aperture.</p>
 	
-						<p>If you are sure you did request for a new password, please click <a target="_blank" href="http://localhost:8000/auth/user/password/reset/confirm/${token}">here</a>&nbsp;to set a new password on your account.
+						<p>If you are sure you did request for a new password, please click <a target="_blank" href="http://localhost:8000/auth/user/password/reset/${token}">here</a>&nbsp;to set a new password on your account.
 						
-						<p></p>If you are not able to click the link above, please copy the following text and paste it in the address bar of your browser: http://localhost:8000/auth/user/password/reset/confirm/${token}</p>
+						<p></p>If you are not able to click the link above, please copy the following text and paste it in the address bar of your browser: http://localhost:8000/auth/user/password/reset/${token}</p>
 
 						<p><strong>Please remember, the link will only stay active for 30 minutes from receiving this email, after which you have to request for a new password once again!</strong></p>
 	
@@ -189,9 +189,11 @@ exports.resetUserPassword = (req, res) => {
 	});
 };
 
-/* UPDATE */
 exports.attemptUserPasswordReset = async (req, res) => {
 	const token = req.params.token;
+	/* Flash messages */
+	let passwordError = req.flash('passwordMismatchError', 'The entered passwords do not match. Please try again.');
+	if (passwordError.length === 0) null;
 	try {
 		const user = await User.findOne({ pwResetToken: token, tokenExpiry: { $gt: Date.now() } });
 		res.render('./auth/reset', {
@@ -199,16 +201,16 @@ exports.attemptUserPasswordReset = async (req, res) => {
 			csrfToken: res.locals.csrfToken,
 			user: res.locals.loggedInUser,
 			associatedUser: user._id.toString(),
+			token: token,
+			error: passwordError,
+			id: user._id.toString(),
 		});
 	} catch (error) {
 		throw new Error(error);
 	}
-	res.render('./auth/reset', {
-		title: 'Reset your password',
-		csrfToken: res.locals.csrfToken,
-		user: res.locals.loggedInUser,
-	});
 };
+
+
 
 /* DELETE */
 exports.deleteUserAccount = (req, res) => {
