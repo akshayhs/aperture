@@ -3,7 +3,7 @@ const controller = require('../controllers/auth');
 
 const router = express.Router();
 
-router.post('/user/password/reset', controller.resetUserPassword);
+router.get('/user/password/reset', controller.displayPasswordResetForm);
 router.get('/register', controller.displaySignup);
 router.post('/register', controller.createAccount);
 router.post('/login/succeeded', controller.authenticateUser);

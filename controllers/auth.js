@@ -126,6 +126,15 @@ exports.attemptLogout = (req, res) => {
 	});
 };
 
+exports.displayPasswordResetForm = async (req, res) => {
+	res.render('./auth/reset_page', {
+		title: 'Reset your password',
+		csrfToken: res.locals.csrfToken,
+		user: res.locals.loggedInUser,
+		currentYear: new Date().getFullYear(),
+	});
+};
+
 exports.resetUserPassword = (req, res) => {
 	/* Will either get username or email depending on user entered input */
 	const userInfo = req.body.info;
@@ -150,21 +159,21 @@ exports.resetUserPassword = (req, res) => {
 					'resetRequestSuccess',
 					'Your request has been successfully processed. Please check your email id to reset your password.'
 				);
-				res.redirect('/auth/login');
+				res.redirect('/');
 				transporter.sendMail({
 					to: user.email,
 					from: 'ak.prodigy24@gmail.com',
-					subject: 'Reset your account password on Aperture',
+					subject: 'Reset your password on Aperture',
 					html: `<h3>Hey,&nbsp;${user.name.first || user.username}!</h3>
 						<p>We have received a request for resetting your user account password on Aperture.</p>
 	
-						<p>If you are sure you did request for a new password, please click <a target="blank" href="http://localhost:8000/auth/user/password/reset/confirm/${token}">here</a>&nbsp;to set a new password on your account.
+						<p>If you are sure you did request for a new password, please click <a target="_blank" href="http://localhost:8000/auth/user/password/reset/confirm/${token}">here</a>&nbsp;to set a new password on your account.
 						
 						<p></p>If you are not able to click the link above, please copy the following text and paste it in the address bar of your browser: http://localhost:8000/auth/user/password/reset/confirm/${token}</p>
 
-						<p><strong>Please remember, the link will only stay active for 30 minutes from sending this email, after which you have to request for a new password once again!</strong></p>
+						<p><strong>Please remember, the link will only stay active for 30 minutes from receiving this email, after which you have to request for a new password once again!</strong></p>
 	
-						<p>Should you have received this email when you did not request for a new password, you can simply ignore this email as anybody else trying to access your account cannot proceed further without the access to the link above!</p>
+						<p>Should you have received this email when you did not request for a new password, you can simply ignore this email as anybody else trying to access your account cannot proceed further without the access to the link above.</p>
 						`,
 				});
 			})
@@ -172,4 +181,57 @@ exports.resetUserPassword = (req, res) => {
 				console.log(error);
 			});
 	});
+};
+
+/* UPDATE */
+exports.attemptUserPasswordReset = async (req, res) => {
+	const token = req.params.token;
+	try {
+		const user = await User.findOne({ pwResetToken: token, tokenExpiry: { $gt: Date.now() } });
+		res.render('./auth/reset', {
+			title: 'Reset your password',
+			csrfToken: res.locals.csrfToken,
+			user: res.locals.loggedInUser,
+			associatedUser: user._id.toString(),
+		});
+	} catch (error) {
+		throw new Error(error);
+	}
+	res.render('./auth/reset', {
+		title: 'Reset your password',
+		csrfToken: res.locals.csrfToken,
+		user: res.locals.loggedInUser,
+	});
+};
+
+/* DELETE */
+exports.deleteUserAccount = (req, res) => {
+	/* Fetch the username for reference and to send delete confirmation email */
+	const username = req.body.username;
+	/* Create random bytes as a token to attach to user to confirm the user indeed requested deletion */
+	try {
+		const generatedToken = crypto.randomBytes(32, (error, buffer) => {
+			return buffer.toString('hex');
+		});
+		/* Find the user whose account must be deleted */
+		let user = User.findOne({ username: username });
+		transporter.sendMail({
+			to: user.email,
+			from: 'ak.prodigy24@gmail.com',
+			subject: 'Confirm deletion of your account on Aperture',
+			html: `<h3>Hey,&nbsp;${user.name.first || user.username}!</h3>
+				<p>Unfortunatey, someone<em>(hoping it is you)</em> has requested your account be deleted on Aperture.</p>
+
+				<p>If you wish to confirm this request, please click <a target="blank" href="http://localhost:8000/users/${user.username}/auth/delete/confirm/${generatedToken}">here.</a> to confirm the deletion process.</p>
+
+				<p>If you have problems with the platform itself, consider <a href="mailto:moderator@webfluence.dev?subject=Problems%20with%20the%20platform">writing to us first</a>.&nbspIn most cases, we will be able to help you with your queries.</p>
+
+				<p>If you wish to delete your account permanently, we understand and respect your decision. Thank you for staying with us for so long. We are sorry to see you go. Once an account is scheduled for deletion, it cannot be restored manually under any circumstances. Should you wish to post your works, blogs and comment on others' works, you will have to create a new account once again.</p>
+			`,
+		});
+		/* Redirect the user once the request is complete */
+		return res.redirect('/');
+	} catch (error) {
+		console.log(error);
+	}
 };
