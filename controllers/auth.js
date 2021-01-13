@@ -62,9 +62,11 @@ exports.displayLogin = (req, res) => {
 	let message = req.flash('error');
 	let userErrorMessage = req.flash('userNotFoundError');
 	let passwordResetMessage = req.flash('resetRequestSuccess');
+	let passwordReset = req.flash('passwordResetSuccess');
 	if (message.length === 0) message = null;
 	if (passwordResetMessage.length === 0) passwordResetMessage = null;
 	if (userErrorMessage.length === 0) userErrorMessage = null;
+	if (passwordReset.length === 0) passwordReset = null;
 	res.render('./auth/login', {
 		title: 'Login to your account',
 		csrfToken: res.locals.csrfToken,
@@ -72,6 +74,7 @@ exports.displayLogin = (req, res) => {
 		error: message,
 		passwordResetNotification: passwordResetMessage,
 		userNotFoundError: userErrorMessage,
+		passwordResetSuccess: passwordReset,
 	});
 };
 
@@ -173,9 +176,9 @@ exports.resetUserPassword = (req, res) => {
 					html: `<h3>Hey,&nbsp;${user.name.first || user.username}!</h3>
 						<p>We have received a request for resetting your user account password on Aperture.</p>
 	
-						<p>If you are sure you did request for a new password, please click <a target="_blank" href="http://localhost:8000/auth/user/password/reset/${token}">here</a>&nbsp;to set a new password on your account.
+						<p>If you are sure you did request for a new password, please click <a target="_blank" href="http://localhost:3000/auth/user/password/reset/${token}">here</a>&nbsp;to set a new password on your account.
 						
-						<p></p>If you are not able to click the link above, please copy the following text and paste it in the address bar of your browser: http://localhost:8000/auth/user/password/reset/${token}</p>
+						<p></p>If you are not able to click the link above, please copy the following text and paste it in the address bar of your browser: http://localhost:3000/auth/user/password/reset/${token}</p>
 
 						<p><strong>Please remember, the link will only stay active for 30 minutes from receiving this email, after which you have to request for a new password once again!</strong></p>
 	
@@ -192,7 +195,7 @@ exports.resetUserPassword = (req, res) => {
 exports.attemptUserPasswordReset = async (req, res) => {
 	const token = req.params.token;
 	/* Flash messages */
-	let passwordError = req.flash('passwordMismatchError', 'The entered passwords do not match. Please try again.');
+	let passwordError = req.flash('passwordMismatchError');
 	if (passwordError.length === 0) null;
 	try {
 		const user = await User.findOne({ pwResetToken: token, tokenExpiry: { $gt: Date.now() } });
@@ -210,7 +213,32 @@ exports.attemptUserPasswordReset = async (req, res) => {
 	}
 };
 
-
+/* UPDATE */
+exports.confirmUserPasswordReset = async (req, res) => {
+	const password = req.body.password;
+	const c_password = req.body.c_password;
+	const token = req.params.token;
+	const id = req.body.id;
+	try {
+		const user = await User.findOne({ pwResetToken: token, tokenExpiry: { $gt: Date.now() }, _id: id });
+		if (password !== c_password) {
+			req.flash('passwordMismatchError', 'The entered passwords do not match. Please try again.');
+			return res.redirect(`/auth/user/password/reset/${token}`);
+		}
+		const updatedPassword = await bcrypt.hash(c_password, 12);
+		user.password = updatedPassword;
+		user.pwResetToken = undefined; // Will not have values once password is reset.
+		user.tokenExpiry = undefined; // Will not be required again once password is reset.
+		user.save();
+		req.flash(
+			'passwordResetSuccess',
+			'Your password has been reset successfully. Please login to your account again.'
+		);
+		res.status(201).redirect('/auth/login');
+	} catch (error) {
+		throw new Error(error);
+	}
+};
 
 /* DELETE */
 exports.deleteUserAccount = (req, res) => {
