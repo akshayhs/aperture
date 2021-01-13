@@ -3,6 +3,7 @@ const controller = require('../controllers/auth');
 
 const router = express.Router();
 
+router.patch('/user/password/reset/:token/confirm', controller.confirmUserPasswordReset);
 router.get('/user/password/reset/:token', controller.attemptUserPasswordReset);
 router.post('/user/password/reset/', controller.resetUserPassword);
 router.get('/user/password/reset', controller.displayPasswordResetForm);
