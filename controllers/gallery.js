@@ -113,9 +113,9 @@ exports.displayUploadForm = (req, res) => {
 
 exports.displayImage = async (req, res) => {
 	let message = req.flash('critiqueUpdateSuccess');
-	let deleteMessage = req.flash('deleteSuccess');
+	let critiqueDeleteSuccess = req.flash('deleteSuccess');
 	if (message.length === 0) message = null;
-	if (deleteMessage.length === 0) deleteMessage = null;
+	if (critiqueDeleteSuccess.length === 0) deleteMessage = null;
 	const id = req.params.id;
 	try {
 		let image = await Image.findById({ _id: id })
@@ -138,7 +138,7 @@ exports.displayImage = async (req, res) => {
 			critiques: image.critiques,
 			csrfToken: res.locals.csrfToken,
 			updatedCritique: message,
-			deleteMessage,
+			critiqueDeleteSuccess,
 		});
 	} catch (error) {
 		console.log(error);
@@ -248,6 +248,23 @@ exports.editImageDetails = (req, res) => {
 	});
 };
 
+exports.editUserCritique = async (req, res) => {
+	const { id, critiqueId } = req.params;
+	const comment = req.body.updatedcomment;
+	try {
+		const critique = await Critique.findByIdAndUpdate(
+			{
+				_id: critiqueId,
+				imageId: id,
+			},
+			{ $set: { comment } }
+		);
+		res.status(201).redirect(`/gallery/${id}`);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 /* DELETE */
 exports.deleteImage = async (req, res) => {
 	const id = req.params.id;
@@ -276,7 +293,7 @@ exports.deleteCritique = async (req, res) => {
 	try {
 		await Critique.findByIdAndDelete({ _id: critiqueId });
 		await Image.findByIdAndUpdate({ _id: imageId }, { $pull: { critiques: critiqueId } });
-		req.flash('deleteSuccess', 'Your critique has been deleted successfullly.');
+		req.flash('critiqueDeleteSuccess', 'Your critique has been deleted successfullly.');
 		return res.redirect('`/${gallery}/${imageId}');
 	} catch (error) {
 		console.log(error);
