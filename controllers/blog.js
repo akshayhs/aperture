@@ -1,6 +1,7 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
+const BlogComment = require('../models/blogcomment');
 
 /* CREATE */
 
@@ -52,8 +53,12 @@ exports.createBlog = (req, res) => {
 };
 
 exports.displayBlog = async (req, res) => {
+	let commentDeleteMessage = req.flash('deleteCommentSuccess');
+	let commentUpdateMessage = req.flash('commentEditSuccess');
+	if (commentUpdateMessage.length === 0) commentUpdateMessage = null;
+	if (commentDeleteMessage.length === 0) commentDeleteMessage = null;
 	try {
-		let blog = await (await Blog.findById({ _id: req.params.id }))
+		const blog = await (await Blog.findById({ _id: req.params.id }))
 			.populate({ path: 'author', model: User })
 			.populate({ path: 'comments', model: Comment })
 			.populate({ path: 'comments', populate: { path: 'author', model: User } })
@@ -65,6 +70,8 @@ exports.displayBlog = async (req, res) => {
 			blog: blog,
 			comments: blog.comments,
 			author: blog.author,
+			updateSuccess: commentUpdateMessage,
+			deleteSuccess: commentDeleteMessage,
 		});
 	} catch (error) {
 		console.log(error);
@@ -96,6 +103,22 @@ exports.editBlog = (req, res) => {
 		console.log(updatedBlog);
 		res.redirect(`/blogs/${id}`);
 	});
+};
+
+exports.editUserComment = async (req, res) => {
+	const { id, commentId } = req.params;
+	const { updatedcomment } = req.body;
+	try {
+		await BlogComment.findByIdAndUpdate(
+			{ _id: commentId, blogId: id },
+			{ $set: { text: updatedcomment } },
+			{ new: true }
+		);
+		req.flash('commentEditSuccess', 'Your comment was updated successfully.');
+		res.status(201).redirect(`/blogs/${id}`);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 /* DELETE */
