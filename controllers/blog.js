@@ -138,3 +138,14 @@ exports.deleteBlog = async (req, res) => {
 		console.log(error);
 	}
 };
+
+exports.deleteBlogComment = async (req, res) => {
+	const { commentId, id } = req.params;
+	try {
+		await Comment.findByIdAndDelete({ _id: commentId });
+		req.flash('deleteCommentSuccess', 'Your comment was deleted successfully.');
+		return res.redirect(`/blogs/${id}`);
+	} catch (error) {
+		console.log(error);
+	}
+};
