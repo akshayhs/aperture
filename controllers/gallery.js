@@ -1,17 +1,15 @@
 const multer = require('../config/multer');
 const fs = require('fs');
-const ObjectId = require('mongoose').Types.ObjectId;
+const cloudinary = require('../config/cloudinary');
 
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
-const { populate, update } = require('../models/imagecomment');
-const image = require('../models/image');
 
 /* CREATE */
-exports.attemptUpload = (req, res) => {
+exports.attemptUpload = async (req, res) => {
 	const user = req.session.user;
-	const path = req.file.path;
+	const file = req.file;
 	const {
 		category,
 		title,
@@ -27,53 +25,63 @@ exports.attemptUpload = (req, res) => {
 		sensitivity,
 	} = req.body;
 	const tagsToAdd = tags.split(',');
-	multer(req, res, (error) => {
-		if (error) {
-			res.status(500);
-			if (error.code == 'LIMIT_FILE_SIZE') {
-				error.message = 'The uploaded file size is too large as it exceeds the permitted limit of 250KB';
-				error.success = false;
-				req.flash('sizeError', `${error.message}`);
-				return res.redirect('/gallery/upload');
-			}
-		} else if (copyright !== 'on') {
-			req.flash('consentError', 'The consent box must be checked. Please check the box to upload the image.');
-			return res.redirect('/gallery/upload');
-		} else {
-			const image = new Image({
-				path,
-				category,
-				description,
-				title,
-				caption,
+	if (file.size / 1024 > 250) {
+		req.flash('sizeError', 'The uploaded file size is too large as it exceeds the permitted limit of 250KB');
+		return res.status(413).redirect('/gallery/upload');
+	} else if (copyright !== 'on') {
+		req.flash('consentError', 'The consent box must be checked. Please check the consent box to upload your work.');
+		return res.redirect('/gallery/upload');
+	} else {
+		cloudinary.uploader.upload(
+			file.path,
+			{
+				resource_type: 'image',
+				public_id: `projects/aperture/images/${file.originalname}`,
+				unique_filename: true,
+				discard_original_filename: true,
 				tags: tagsToAdd,
-				camera,
-				lens,
-				exposure,
-				shutterspeed,
-				pptechniques,
-				copyright: true,
-				createdBy: user,
-				sensitivity,
-			});
-			image
-				.save()
-				.then((savedImage) => {
-					return User.findOneAndUpdate(
-						{ username: user.username },
-						{ $push: { images: savedImage._id } },
-						{ new: true }
-					);
-				})
-				.then((info) => {
-					console.log(info);
-					res.redirect('/gallery');
-				})
-				.catch((error) => {
-					console.log(error);
+				allowed_formats: [ 'jpg', 'jpeg' ],
+			},
+			(error, result) => {
+				if (error) console.log(error);
+				console.log(result);
+				const image = new Image({
+					path: result.url,
+					category,
+					description,
+					title,
+					caption,
+					tags: tagsToAdd,
+					camera,
+					lens,
+					exposure,
+					shutterspeed,
+					pptechniques,
+					copyright: true,
+					createdBy: user,
+					sensitivity,
 				});
-		}
-	});
+				image
+					.save()
+					.then((image) => {
+						return User.findByIdAndUpdate(
+							{ _id: user._id },
+							{ $push: { images: image._id } },
+							{ new: true }
+						);
+					})
+					.then(() => {
+						fs.unlink(file.path, (error) => {
+							if (error) console.log(error);
+							res.status(201).redirect('/gallery');
+						});
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		);
+	}
 };
 
 exports.addUserComment = (req, res) => {
