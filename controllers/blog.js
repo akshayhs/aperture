@@ -1,3 +1,6 @@
+const fs = require('fs'); // Required for .unlink()
+const cloudinary = require('../config/cloudinary');
+
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
@@ -7,23 +10,59 @@ const BlogComment = require('../models/blogcomment');
 
 exports.saveBlog = (req, res) => {
 	const author = req.session.user;
-	const { title, abstract, description, shorts } = req.body;
-	const blog = new Blog({ title, author, shorts, abstract, description });
-	blog
-		.save()
-		.then((savedBlog) => {
-			return User.findOneAndUpdate(
-				{ username: author.username },
-				{ $push: { blogs: savedBlog._id } },
-				{ new: true }
-			);
-		})
-		.then((info) => {
-			res.redirect('/blogs');
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+	const image = req.file;
+	const { title, alt_text, copyright, abstract, description, shorts } = req.body;
+	/* Reject upload if the author does not check copyright box */
+	if (copyright !== 'on') {
+		req.flash(
+			'copyrightError',
+			'The copyright notice must be accepted. Please check the box to complete uploading your blog.'
+		);
+		return res.redirect('/gallery/add');
+	} else {
+		cloudinary.uploader.upload(
+			image.path,
+			{
+				resource_type: 'image',
+				public_id: `projects/aperture/images/blogs/${image.originalname}`,
+				unique_filename: true,
+				discard_original_filename: true,
+				allowed_formats: [ 'jpg', 'jpeg' ],
+			},
+			(error, result) => {
+				if (error) console.log(error);
+				/* Create the blog */
+				const blog = new Blog({
+					title,
+					image: result.url, // change to .secure_url when serving with https
+					alt_text,
+					abstract,
+					shorts,
+					description,
+					copyright: true,
+					author: author._id,
+				});
+				blog
+					.save()
+					.then((blog) => {
+						return User.findByIdAndUpdate(
+							{ _id: author._id },
+							{ $push: { blogs: blog._id } },
+							{ new: true }
+						);
+					})
+					.then(() => {
+						fs.unlink(image.path, (error) => {
+							if (error) console.log(error);
+							res.status(201).redirect('/blogs');
+						});
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		);
+	}
 };
 
 exports.addUserComment = (req, res) => {
@@ -58,11 +97,10 @@ exports.displayBlog = async (req, res) => {
 	if (commentUpdateMessage.length === 0) commentUpdateMessage = null;
 	if (commentDeleteMessage.length === 0) commentDeleteMessage = null;
 	try {
-		const blog = await (await Blog.findById({ _id: req.params.id }))
+		const blog = await Blog.findById({ _id: req.params.id })
 			.populate({ path: 'author', model: User })
 			.populate({ path: 'comments', model: Comment })
-			.populate({ path: 'comments', populate: { path: 'author', model: User } })
-			.execPopulate();
+			.populate({ path: 'comments', populate: { path: 'author', model: User } });
 		res.render('./blog/display', {
 			title: `${blog.title}`,
 			isAuthenticated: res.locals.isAuthenticated,
