@@ -1,5 +1,5 @@
-const { update } = require('../models/user');
 const User = require('../models/user');
+const Image = require('../models/image');
 
 /* CREATE */
 exports.completeUserProfile = (req, res) => {
@@ -66,6 +66,23 @@ exports.displayUserDetails = async (req, res) => {
 		})
 		.catch((error) => {
 			console.log(error);
+		});
+};
+
+exports.displayUserUploadedImages = async (req, res, next) => {
+	const user = req.session.user;
+	await Image.find({ createdBy: user._id })
+		.then((images) => {
+			res.status(200).render('./user/uploaded_images.ejs', {
+				title: `Your works`,
+				user: res.locals.loggedInUser,
+				isAuthenticated: res.locals.isAuthenticated,
+				associatedUser: user,
+				images: images,
+			});
+		})
+		.catch((error) => {
+			next(error);
 		});
 };
 
