@@ -1,14 +1,25 @@
 const mongoose = require('mongoose');
-const moment = require('moment-timezone');
 const Schema = mongoose.Schema;
-
-const dateIndia = moment.tz(Date.now(), 'Asia/Calcutta');
 
 const blogSchema = new Schema(
 	{
+		image: {
+			type: String,
+			required: true,
+		},
+		caption: {
+			type: String,
+			maxlength: 155,
+			required: true,
+		},
 		title: {
 			type: String,
 			required: true,
+		},
+		alt_text: {
+			type: String,
+			maxlength: 120,
+			default: this.title,
 		},
 		abstract: {
 			type: String,
@@ -18,7 +29,11 @@ const blogSchema = new Schema(
 		description: {
 			type: String,
 			required: true,
-			maxlength: 3000,
+			maxlength: 1500,
+		},
+		copyright: {
+			type: Boolean,
+			required: true,
 		},
 		author: {
 			type: Schema.Types.ObjectId,
