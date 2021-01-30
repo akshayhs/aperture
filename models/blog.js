@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const blogSchema = new Schema(
+const Blog = new Schema(
 	{
 		image: {
 			type: String,
@@ -50,4 +50,14 @@ const blogSchema = new Schema(
 	{ timestamps: true }
 );
 
-module.exports = mongoose.model('Blog', blogSchema);
+Blog.pre('remove', async function (next) {
+	try {
+		mongoose.model('Comment').remove({ author: this._id });
+		console.log(`Comments associated with ${this.title} were removed automatically from the hook.`);
+		next();
+	} catch (error) {
+		console.log(error);
+	}
+});
+
+module.exports = mongoose.model('Blog', Blog);
