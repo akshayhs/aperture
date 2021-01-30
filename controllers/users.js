@@ -1,3 +1,4 @@
+const { update } = require('../models/user');
 const User = require('../models/user');
 
 /* CREATE */
@@ -10,6 +11,7 @@ exports.completeUserProfile = (req, res) => {
 	)
 		.then((savedInfo) => {
 			console.log(savedInfo);
+			req.flash('updateSuccess', 'Your details were saved successfully.');
 			res.redirect(`/users/${username}/profile`);
 		})
 		.catch((error) => {
@@ -29,7 +31,9 @@ exports.completeProfile = (req, res) => {
 
 exports.displayProfile = async (req, res, next) => {
 	let message = req.flash('error');
+	let updateSuccessMessage = req.flash('updateSuccess');
 	if (message.length === 0) message = null;
+	if (updateSuccessMessage.length === 0) updateSuccessMessage = null;
 	const username = req.params.username;
 	User.findOne({ username: username })
 		.then((foundUser) => {
@@ -40,8 +44,8 @@ exports.displayProfile = async (req, res, next) => {
 				isAuthenticated: res.locals.isAuthenticated,
 				error: message,
 				name: res.locals.loggedInUser.name,
+				updateSuccess: updateSuccessMessage,
 			});
-			console.log(foundUser);
 		})
 		.catch((error) => {
 			console.log(error);
@@ -87,9 +91,9 @@ exports.saveUserDetails = async (req, res) => {
 
 /* DELETE */
 exports.deleteAccount = async (req, res, next) => {
-	const username = req.params.username;
-	await User.findByIdAndDelete({ username: username }).then((foundUser) => {
-		/* User not found */
-		if (!foundUser) return res.redirect('/');
-	});
+	// const username = req.params.username;
+	// await User.findByIdAndDelete({ username: username }).then((foundUser) => {
+	// 	/* User not found */
+	// 	if (!foundUser) return res.redirect('/');
+	// });
 };
