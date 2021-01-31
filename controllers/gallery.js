@@ -278,10 +278,6 @@ exports.deleteImage = async (req, res) => {
 	const id = req.params.id;
 	const image = await Image.findOne({ _id: id });
 	try {
-		fs.unlink(image.path, (error) => {
-			if (error) console.log(error);
-			console.log(`Image under ${image.title} successfully unlinked`);
-		});
 		await Image.findByIdAndDelete({ _id: id });
 		await User.findOneAndUpdate(
 			{ username: res.locals.loggedInUser.username },
