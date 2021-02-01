@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
-
+const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env
+	.MONGO_USER_PWD}@aperture.wnhi2.mongodb.net/${process.env.MONGO_DBNAME}?retryWrites=true&w=majority`;
+	
 const connectToDb = async () => {
 	try {
-		const db = await mongoose.connect('mongodb://localhost:27017/aperture', {
+		const db = await mongoose.connect(mongo_uri, {
 			useNewUrlParser: true,
 			useFindAndModify: false,
 			useUnifiedTopology: true,
@@ -10,7 +12,7 @@ const connectToDb = async () => {
 		});
 		console.log(`MongoDB database now available on ${db.connection.host}`);
 	} catch (error) {
-		console.log(error);
+		throw Error(error);
 	}
 };
 
