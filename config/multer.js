@@ -1,5 +1,5 @@
 const multer = require('multer');
-const { set } = require('./sendgrid');
+const path = require('path');
 
 const fileFilter = (req, file, cb) => {
 	/* Accept images if mimetypes match */
@@ -16,10 +16,10 @@ const setFileDate = `${date.getDate()}${date.getMonth()}${date.getFullYear()}${d
 
 const fileStorage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, './uploads/images');
+		cb(null, path.join('public', 'uploads'));
 	},
 	filename: (req, file, cb) => {
-		cb(null, `${setFileDate}${req.session.user.username}${file.originalname}`);
+		cb(null, `${setFileDate}_${file.originalname.replace(' ', '_')}`);
 	},
 });
 
