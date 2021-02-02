@@ -112,7 +112,7 @@ exports.authenticateUser = (req, res) => {
 			req.session.user = currentUser;
 			req.session.save((error) => {
 				if (error) console.log(error);
-				res.redirect('/');
+				res.redirect('/gallery');
 			});
 		})
 		.catch((error) => {
@@ -121,8 +121,6 @@ exports.authenticateUser = (req, res) => {
 };
 
 exports.attemptLogout = (req, res) => {
-	req.session.isLoggedIn = false;
-	req.session.user = null;
 	req.session.destroy((error) => {
 		if (error) console.log(error);
 		res.redirect('/');
