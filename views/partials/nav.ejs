@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 h5">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 ">
   <div class="container">
     <a class="navbar-brand font-weight-bold" href="/"><i class="fas fa-crop"></i>&nbsp;Aperture</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -6,7 +6,7 @@
   </button>
   <!-- Collapsible content -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto h6">
       <li class="nav-item active">
         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
       </li>
@@ -32,7 +32,9 @@
         </div>
       </div>
       <!-- <a class="nav-link text-white">Hi&nbsp;<%= user.name ? user.name.first : user.username %>!</a>     -->
-      <a href="/auth/logout" class="btn btn-warning text-dark"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</a>    
+      <form action="/auth/logout?&_csrf=<%= csrfToken %>" method="POST">
+        <button type="submit" class="btn btn-warning font-weight-bold"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</button> 
+      </form>
     <% } else { %>
       <a href="/auth/login" class="nav-link text-white"><i class="fas fa-user-lock"></i>&nbsp;Log in</a>    
       <a href="/auth/register" class="btn btn-warning text-dark font-weight-bold"><i class="fas fa-user-plus"></i>&nbsp;Register</a>
