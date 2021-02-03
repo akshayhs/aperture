@@ -2,22 +2,62 @@
 <%- include('../partials/nav') %>
 <div class="container my-3 p-3">
   <h1 class="text-center text-capitalize">add your blog</h1>
-  <form class="card p-5 bg-light my-3" action="/blogs/success" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+  <form class="card p-5 bg-light my-3" action="/blogs/success?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+    <!-- Image -->
+    <h4 class="text-capitalize text-center">image information </h4>
+    <div class="row my-3">
+      <div class="col">
+      <div class="form-group">
+        <label for="image" class="font-weight-bold text-capitalize">image&nbsp;<em><small class="font-weight-bold text-capitalize text-danger">required</small></em></label>
+        <input type="file" name="image" id="image" class="form-control-file" required>
+      </div>
+      </div>
+    </div>
+    <div class="row my-3">
+      <!-- Image title -->
+      <div class="col">
+        <div class="form-group">
+          <label for="caption" class="font-weight-bold text-capitalize">caption for the image
+            <em><small class="font-weight-bold text-capitalize text-danger">required</small></em></label>
+          <input required type="text" name="caption" id="caption" class="form-control"
+            placeholder="Add a suitable caption for your image">
+            <em><small class="text-secondary font-weight-bold text-capitalize">cannot be more than 120 characters</small></em>
+        </div>
+      </div>
+      <!-- alt text for image -->
+      <div class="col">
+        <div class="form-group">
+          <label for="alt_text" class="font-weight-bold text-capitalize">alt text
+            <em><small>(optional)</small></em></label>
+          <input type="text" name="alt_text" id="alt_text" class="form-control"
+            placeholder="Specify an alternate text for your image">
+            <em><small class="text-secondary font-weight-bold text-capitalize">cannot be more than 120 characters</small></em>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h4 class="text-capitalize text-center my-2 ">text information</h4>
     <!-- Title -->
     <div class="form-group">
-      <label for="title" class="font-weight-bold text-capitalize">title</label>
+      <label for="title" class="font-weight-bold text-capitalize">title <em><small class="text-danger font-weight-bold">required</small></em></label>
       <input type="text" name="title" id="title" class="form-control" placeholder="Add a suitable title" required>
     </div>
     <!-- Synopsis/abstract -->
     <div class="form-group my-3">
-      <label for="abstract" class="font-weight-bold text-capitalize">abstract</label>
-      <textarea name="abstract" style="overflow-y: scroll; resize: none;" id="abstract" cols="30" rows="3" class="form-control" maxlength="60" spellcheck="true" placeholder="Abstract must not be more than 60 characters" required></textarea>
+      <label for="abstract" class="font-weight-bold text-capitalize">abstract <em><small class="text-danger font-weight-bold">required</small></em></label>
+      <textarea name="abstract" style="overflow-y: scroll; resize: none;" id="abstract" cols="30" rows="3" class="form-control" maxlength="140" spellcheck="true" placeholder="Abstract must not be more than 140 characters" required></textarea>
     </div>
     <!-- Description -->
     <div class="form-group my-3">
-      <label for="description" class="font-weight-bold text-capitalize">description</label>
-      <textarea name="description" style="overflow-y: scroll; resize: none;" id="description" cols="30" rows="10" class="form-control" maxlength="3000" spellcheck="true" placeholder="Description must not be more than 3000 characters" required></textarea>
+      <label for="description" class="font-weight-bold text-capitalize">description <em><small class="text-danger font-weight-bold">required</small></em></label>
+      <textarea name="description" style="overflow-y: scroll; resize: none;" id="description" cols="30" rows="10" class="form-control" maxlength="1500" spellcheck="true" placeholder="Description must not be more than 1500 characters" required></textarea>
+    </div>
+    <!-- Copyright checkbox -->
+    <div class="form-group my-3">
+      <div class="form-group form-check">
+        <input type="checkbox" name="copyright" id="copyright" class="form-check-input" required>
+        <label for="checkbox">I hereby confirm that I am the sole author of the box above and I agree to cooperate with the platform in case of any copyright infringement claims.</label>
+      </div>
     </div>
     <!-- Buttons and CSRF token -->
     <div class="form-group my-3">    
