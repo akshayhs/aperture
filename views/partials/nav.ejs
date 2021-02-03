@@ -21,9 +21,10 @@
       </li>              
     </ul>
     <% if(isAuthenticated) { %>
+      <!-- Small device breakpoints -->
       <div class="dropdown mr-3">
         <button class="btn btn-dark dropdown-toggle" type="button" id="userprofileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Hi&nbsp;<%= user.name? user.name.first : user.username %>!
+          Hi&nbsp;<%= user.name.first || user.username %>!
         </button>
         <div class="dropdown-menu" aria-labelledby="userprofileDropdown">
           <a class="dropdown-item" target="_blank" href="/users/<%= user.username%>/profile">Your profile</a>
@@ -31,7 +32,6 @@
           <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </div>
-      <!-- <a class="nav-link text-white">Hi&nbsp;<%= user.name ? user.name.first : user.username %>!</a>     -->
       <form action="/auth/logout?&_csrf=<%= csrfToken %>" method="POST">
         <button type="submit" class="btn btn-warning font-weight-bold"><i class="fas fa-sign-out-alt"></i>&nbsp;Log out</button> 
       </form>
