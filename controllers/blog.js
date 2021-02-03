@@ -11,58 +11,55 @@ const BlogComment = require('../models/blogcomment');
 exports.saveBlog = (req, res) => {
 	const author = req.session.user;
 	const image = req.file;
-	const { title, alt_text, copyright, abstract, description, shorts } = req.body;
-	/* Reject upload if the author does not check copyright box */
-	if (copyright !== 'on') {
-		req.flash(
-			'copyrightError',
-			'The copyright notice must be accepted. Please check the box to complete uploading your blog.'
-		);
-		return res.redirect('/gallery/add');
-	} else {
-		cloudinary.uploader.upload(
-			image.path,
-			{
-				resource_type: 'image',
-				public_id: `projects/aperture/images/blogs/${image.originalname}`,
-				unique_filename: true,
-				discard_original_filename: true,
-				allowed_formats: [ 'jpg', 'jpeg' ],
-			},
-			(error, result) => {
-				if (error) console.log(error);
-				/* Create the blog */
-				const blog = new Blog({
-					title,
-					image: result.url, // change to .secure_url when serving with https
-					alt_text,
-					abstract,
-					shorts,
-					description,
-					copyright: true,
-					author: author._id,
-				});
-				blog
-					.save()
-					.then((blog) => {
-						return User.findByIdAndUpdate(
-							{ _id: author._id },
-							{ $push: { blogs: blog._id } },
-							{ new: true }
-						);
-					})
-					.then(() => {
-						fs.unlink(image.path, (error) => {
-							if (error) console.log(error);
-							res.status(201).redirect('/blogs');
-						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-			}
-		);
+	const { caption, alt_text, title, copyright, abstract, description, shorts } = req.body;
+	console.log(req.file);
+	console.log(req.body);
+	/* Reject the upload if the author does not check the copyright box */
+	if (copyright != 'on') {
+		req.flash('copyrightError', 'Please check the copyright checkbox to complete uploading your blog');
+		return res.status(422).redirect('/blogs/add');
 	}
+	if (!image) image = '';
+	if (alt_text.length === 0) alt_text = null;
+	if (caption.length === 0) caption = null;
+	/* Upload the file to cloudinary */
+	cloudinary.uploader.upload(
+		image.path,
+		{
+			resource_type: 'image',
+			public_id: `projects/aperture/images/blogs/${image.originalname}`,
+			unique_filename: true,
+			discard_original_filename: true,
+		},
+		(error, result) => {
+			if (error) console.log(error);
+			console.log(result);
+			const blog = new Blog({
+				image: result.url,
+				caption,
+				title,
+				alt_text,
+				abstract,
+				description,
+				copyright: true,
+				author: author._id,
+			});
+			blog
+				.save()
+				.then((blog) => {
+					return User.findByIdAndUpdate({ _id: author._id }, { $set: { blogs: blog._id } }, { new: true });
+				})
+				.then(() => {
+					fs.unlink(image.path, (error) => {
+						if (error) console.log(error);
+						res.status(201).redirect('/blogs');
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
+	);
 };
 
 exports.addUserComment = (req, res) => {
