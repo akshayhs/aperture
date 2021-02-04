@@ -22,12 +22,13 @@ exports.saveBlog = (req, res) => {
 	if (!image) image = '';
 	if (alt_text.length === 0) alt_text = null;
 	if (caption.length === 0) caption = null;
+	const imageTitle = title.replace(' ', '_');
 	/* Upload the file to cloudinary */
 	cloudinary.uploader.upload(
 		image.path,
 		{
+			public_id: `projects/aperture/images/blogs/${imageTitle}`,
 			resource_type: 'image',
-			public_id: `projects/aperture/images/blogs/${image.originalname}`,
 			unique_filename: true,
 			discard_original_filename: true,
 		},
@@ -36,6 +37,7 @@ exports.saveBlog = (req, res) => {
 			console.log(result);
 			const blog = new Blog({
 				image: result.url,
+				public_id: result.public_id,
 				caption,
 				title,
 				alt_text,
@@ -158,12 +160,22 @@ exports.editUserComment = async (req, res) => {
 
 /* DELETE */
 exports.deleteBlog = async (req, res) => {
-	const username = res.locals.loggedInUser.username;
+	const user = req.session.user;
 	const id = req.params.id;
 	try {
-		await Blog.findByIdAndDelete({ _id: id });
-		await Comment.findOneAndDelete({ blogId: id });
-		await User.findOneAndUpdate({ username }, { $pull: { blogs: id } }, { new: true });
+		const blog = await Blog.findByIdAndDelete({ _id: id });
+		cloudinary.uploader.destroy(
+			blog.public_id,
+			{
+				resource_type: 'image',
+				invalidate: true,
+			},
+			(error, result) => {
+				if (error) console.log(error);
+				console.log(result);
+			}
+		);
+		await User.findOneAndUpdate({ _id: user._id }, { $pull: { blogs: blog._id } }, { new: true });
 		req.flash(
 			'deleteSuccess',
 			'The blog you previously posted has been successfully deleted. It is no longer accessible by anyone.'
