@@ -11,7 +11,7 @@ const Critique = require('../models/imagecomment');
 /* CREATE */
 exports.attemptUpload = async (req, res, next) => {
 	const user = req.session.user;
-	const file = req.file;
+	const image = req.file;
 	const {
 		category,
 		title,
@@ -27,17 +27,17 @@ exports.attemptUpload = async (req, res, next) => {
 		sensitivity,
 	} = req.body;
 	const tagsToAdd = tags.split(',');
-	const imageTitle = title.split(' ', '_');
+	const assetTitle = title.replace(' ', '_');
 	console.log(req.file);
 	if (copyright !== 'on') {
 		req.flash('consentError', 'The consent box must be checked. Please check the consent box to upload your work.');
 		return res.redirect('/gallery/upload');
 	} else {
 		cloudinary.uploader.upload(
-			file.path,
+			image.path,
 			{
-				public_id: `projects/aperture/images/${imageTitle}`,
-				resource_type: image,
+				public_id: `projects/aperture/images/${assetTitle}`,
+				resource_type: 'image',
 				unique_filename: true,
 				discard_original_filename: true,
 				tags: tagsToAdd,
@@ -73,7 +73,7 @@ exports.attemptUpload = async (req, res, next) => {
 						);
 					})
 					.then(() => {
-						fs.unlink(file.path, (error) => {
+						fs.unlink(image.path, (error) => {
 							if (error) console.log(error);
 							res.status(201).redirect('/gallery');
 						});
