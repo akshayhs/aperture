@@ -1,13 +1,15 @@
-const multer = require('../config/multer');
+const multer = require('multer');
 const fs = require('fs');
 const cloudinary = require('../config/cloudinary');
+
+const upload = multer().single('image');
 
 const Image = require('../models/image');
 const User = require('../models/user');
 const Critique = require('../models/imagecomment');
 
 /* CREATE */
-exports.attemptUpload = async (req, res) => {
+exports.attemptUpload = async (req, res, next) => {
 	const user = req.session.user;
 	const file = req.file;
 	const {
@@ -25,18 +27,17 @@ exports.attemptUpload = async (req, res) => {
 		sensitivity,
 	} = req.body;
 	const tagsToAdd = tags.split(',');
-	if (file.size / 1024 > 250) {
-		req.flash('sizeError', 'The uploaded file size is too large as it exceeds the permitted limit of 250KB');
-		return res.status(413).redirect('/gallery/upload');
-	} else if (copyright !== 'on') {
+	const imageTitle = title.split(' ', '_');
+	console.log(req.file);
+	if (copyright !== 'on') {
 		req.flash('consentError', 'The consent box must be checked. Please check the consent box to upload your work.');
 		return res.redirect('/gallery/upload');
 	} else {
 		cloudinary.uploader.upload(
 			file.path,
 			{
-				resource_type: 'image',
-				public_id: `projects/aperture/images/${file.originalname}`,
+				public_id: `projects/aperture/images/${imageTitle}`,
+				resource_type: image,
 				unique_filename: true,
 				discard_original_filename: true,
 				tags: tagsToAdd,
@@ -47,6 +48,7 @@ exports.attemptUpload = async (req, res) => {
 				console.log(result);
 				const image = new Image({
 					path: result.url,
+					public_id: result.public_id,
 					category,
 					description,
 					title,
@@ -276,9 +278,19 @@ exports.editUserCritique = async (req, res) => {
 /* DELETE */
 exports.deleteImage = async (req, res) => {
 	const id = req.params.id;
-	const image = await Image.findOne({ _id: id });
 	try {
-		await Image.findByIdAndDelete({ _id: id });
+		const image = await Image.findOneAndDelete({ _id: id });
+		cloudinary.uploader.destroy(
+			image.public_id,
+			{
+				resource_type: 'image',
+				invalidate: true,
+			},
+			(error, result) => {
+				if (error) console.log(error);
+				console.log(result);
+			}
+		);
 		await User.findOneAndUpdate(
 			{ username: res.locals.loggedInUser.username },
 			{ $pull: { images: id } },
