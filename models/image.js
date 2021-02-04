@@ -81,7 +81,7 @@ const imageSchema = new Schema(
 		},
 		pptechniques: {
 			type: String,
-			maxlength: 140,
+			maxlength: 300,
 			default: 'No information has been provided by the author.',
 		},
 		copyright: {
