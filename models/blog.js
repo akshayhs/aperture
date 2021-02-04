@@ -7,10 +7,13 @@ const Blog = new Schema(
 			type: String,
 			required: true,
 		},
+		public_id: {
+			type: String,
+			required: true,
+		},
 		caption: {
 			type: String,
 			maxlength: 155,
-			required: true,
 		},
 		title: {
 			type: String,
@@ -24,7 +27,7 @@ const Blog = new Schema(
 		abstract: {
 			type: String,
 			required: true,
-			maxlength: 60,
+			maxlength: 140,
 		},
 		description: {
 			type: String,
@@ -53,7 +56,7 @@ const Blog = new Schema(
 Blog.pre('remove', async function (next) {
 	try {
 		mongoose.model('Comment').remove({ author: this._id });
-		console.log(`Comments associated with ${this.title} were removed automatically from the hook.`);
+		console.log(`Comments associated with ${this.title} were removed automatically using the remove hook.`);
 		next();
 	} catch (error) {
 		console.log(error);
