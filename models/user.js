@@ -1,12 +1,4 @@
 const mongoose = require('mongoose');
-const moment = require('moment-timezone');
-const dateIndia = moment.tz(Date.now(), 'Asia/Calcutta');
-
-const Image = require('./image');
-const Blog = require('./blog');
-const BlogComment = require('./blogcomment');
-const ImageComment = require('./imagecomment');
-
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -19,7 +11,8 @@ const userSchema = new Schema(
 		},
 		avatar: {
 			type: String,
-			default: '/uploads/images/default.jpeg',
+			default:
+				'https://res.cloudinary.com/webfluence/image/upload/v1612030904/projects/aperture/images/avatar/default.svg',
 		},
 		email: {
 			type: String,
@@ -42,21 +35,22 @@ const userSchema = new Schema(
 		},
 		biography: {
 			type: String,
+			maxlength: 500,
 		},
-		cameras: {
-			type: String,
-			trim: true,
-		},
+		cameras: [
+			{
+				type: String,
+				trim: true,
+			},
+		],
 		lenses: {
 			type: String,
 			trim: true,
 		},
-		images: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'Image',
-			},
-		],
+		images: {
+			type: Array,
+			trim: true,
+		},
 		blogs: [
 			{
 				type: Schema.Types.ObjectId,
