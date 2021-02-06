@@ -1,22 +1,62 @@
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs');
+
 const User = require('../models/user');
 const Image = require('../models/image');
+const { update } = require('../models/user');
 
 /* CREATE */
-exports.completeUserProfile = (req, res) => {
+exports.completeUserProfile = async (req, res) => {
 	const username = req.params.username;
-	const { firstname, lastname, website, cameras, lenses, biography } = req.body;
-	User.findOneAndUpdate(
-		{ username },
-		{ $set: { 'name.first': firstname, 'name.last': lastname, website, biography, cameras, lenses } }
-	)
-		.then((savedInfo) => {
-			console.log(savedInfo);
-			req.flash('updateSuccess', 'Your details were saved successfully.');
-			res.redirect(`/users/${username}/profile`);
-		})
-		.catch((error) => {
+	const image = req.file;
+	const { firstname, lastname, website, biography, cameras, lenses } = req.body;
+	const cameraDetails = cameras.split(',');
+	const lensDetails = lenses.split(',');
+	const updatedUserDetails = {
+		firstname,
+		lastname,
+		website,
+		biography,
+		cameras: cameraDetails,
+		lenses: lensDetails,
+	};
+	/* No file was uploaded by the user */
+	if (!image) {
+		try {
+			await User.findByIdAndUpdate({ _id: req.session.user._id }, { $set: updatedUserDetails }, { new: true });
+			req.flash('infoUpdateSuccess', 'Your details were updated successfully.');
+			return res.status(201).redirect(`/users/${username}/profile`);
+		} catch (error) {
 			console.log(error);
-		});
+		}
+		/* An associated file was found in the file object */
+	} else {
+		const assetName = `${firstname}_${lastname}`;
+		cloudinary.uploader.upload(
+			image.path,
+			{
+				public_id: `projects/aperture/images/avatar/${assetName}`,
+				unique_filename: true,
+				discard_original_filename: true,
+				allowed_formats: [ 'jpg', 'jpeg' ],
+			},
+			(error, result) => {
+				if (error) console.log(error);
+				return User.findByIdAndUpdate(
+					{ _id: req.session.user._id },
+					{ $set: { updatedUserDetails, avatar: result.url } },
+					{ new: true }
+				)
+					.then(() => {
+						req.flash('infoUpdateSuccess', 'Your details were updated successfully.');
+						return res.status(201).redirect(`/users/${username}/profile`);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		);
+	}
 };
 
 /* READ */
@@ -31,7 +71,7 @@ exports.completeProfile = (req, res) => {
 
 exports.displayProfile = async (req, res, next) => {
 	let message = req.flash('error');
-	let updateSuccessMessage = req.flash('updateSuccess');
+	let updateSuccessMessage = req.flash('infoUpdateSuccess');
 	if (message.length === 0) message = null;
 	if (updateSuccessMessage.length === 0) updateSuccessMessage = null;
 	const username = req.params.username;
