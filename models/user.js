@@ -14,6 +14,9 @@ const userSchema = new Schema(
 			default:
 				'https://res.cloudinary.com/webfluence/image/upload/v1612030904/projects/aperture/images/avatar/default.svg',
 		},
+		public_id: {
+			type: String,
+		},
 		email: {
 			type: String,
 			lowercase: true,
@@ -44,7 +47,7 @@ const userSchema = new Schema(
 			},
 		],
 		lenses: {
-			type: String,
+			type: Array,
 			trim: true,
 		},
 		images: {
