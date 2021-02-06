@@ -1,0 +1,26 @@
+<%- include('./partials/header') %>
+<%- include('./partials/nav') %>
+<div class="container my-3 h-100">
+  <div id="mainrow" class="row d-flex justify-content-center align-items-start p-3">
+    <div class="col-sm-12 col-md-6 col-lg-6 my-3 order-sm-1 order-md-0 order-lg-0">
+      <div id="text" class="row">
+        <h1>Oops...</h1>
+        <h5 style="line-height: 1.5em;" class="my-3">We are not sure what happened, but you hit a dead-end!</h5>
+      </div>
+      <div class="row text-left">
+        <p style="font-size: 1.25em">If you are seeing this page, it means the page you were previously trying to access, does not exist.</p>
+      </div>
+      <div class="row my-4">
+        <a href="/" class="btn btn-success font-weight-bold text-uppercase mr-2">home page</a>
+        <a id="btn-back" href="javascript: history.go(-1)" class="btn btn-light border border-secondary font-weight-bold text-uppercase ml-2">go back</a>
+      </div>
+      <div class="row"></div>
+    </div>
+    <div id="error-illustration" class="col-sm-12 col-md-6 col-lg-6 order-sm-0 justify-content-sm-start">
+      <img src="/img/error.png" height="400" alt="Illustrator about an error">      
+    </div>
+  </div>
+</div>
+
+
+
