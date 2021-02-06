@@ -1,5 +1,12 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
+<%  if(updateSuccess) { %>
+<div
+  class="m-0 p-3 d-flex justify-content-center alert alert-success border-top-0 border-left-0 border-right-0 rounded-0 border-success w-100 font-weight-bold"
+  role="alert">
+  <%= updateSuccess %>
+</div>
+<% } %>
 <div class="container my-3 py-3">
   <div class="row">
     <aside class="col-lg-4 p-3 border-1 rounded">
@@ -14,9 +21,6 @@
     </aside>
     <div class="col-lg-8">
       <div class="card bg-light p-5">
-        <% if(updateSuccess) { %>
-          <p class="text-center text-white font-weight-bold bg-success"><%= updateSuccess %></p>
-        <% } %>
         <h5 class="text-capitalize font-weight-bold">basic information</h5>
       <div class="row">
         <div class="col-lg-4 my-3"><strong>Avatar</strong>
@@ -25,6 +29,7 @@
         </div>
         <div class="row p-3 small"><i>Updated on: <span class="font-weight-bold"><%= user.updatedAt.toLocaleDateString('en-IN', {year: 'numeric', month: 'short', day: 'numeric'})%> at <%= user.updatedAt.toLocaleTimeString('en-IN')%></span></i></div>               
       </div>
+      <!-- Personal details -->
       <div class="col-lg-8 my-3">
         <div class="row my-3">
           <div class="col">
@@ -39,11 +44,11 @@
         <div class="row my-3">
           <div class="col">
             <label class="font-weight-bold text-capitalize" for="firstname">first name</label>
-            <p class="form-control"></p>
+            <p class="form-control"><%= user.name.first || null %></p>
           </div>
           <div class="col">
             <label for="lastname" class="font-weight-bold text-capitalize">last name</label>
-            <p class="form-control"></p>
+            <p class="form-control"><%= user.name.last || null%></p>
           </div>
         </div>
         <div class="row my-3">
@@ -62,7 +67,7 @@
       </div>
       <div class="row p-3 my-3">
         <label class="font-weight-bold text-capitalize">about you</label>
-        <p class="form-control"><%= user.biography ? user.biography : '' %></p>
+        <p><%= user.biography || null %></p>
       </div>
       <div class="row p-3 my-3">
         <div class="col">
