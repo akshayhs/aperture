@@ -1,27 +1,20 @@
 <%- include('./partials/header') %>
 <%- include('./partials/nav') %>
-<div class="container my-3">
-  <h1>Gallery</h1>
-  <% if(success) { %>
-    <div class="row d-flex justify-content-center">
-      <p class="text-success font-weight-bold"><%= success %></p>
+<% if(images.length === 0) { %>
+  <div class="m-0 p-3 d-flex justify-content-center alert alert alert-danger border-top-0 border-left-0 border-right-0 rounded-0 border-danger w-100 font-weight-bold" role="alert">
+    Sorry, there are no images uploaded by any members, yet!
+  </div>
+<% } %>
+<div class="container my-3"> 
+  <% if (isAuthenticated) { %>
+    <div class="row d-flex justify-content-center align-items-center my-3">
+      <a href="/gallery/upload" class="btn btn-info font-weight-bold text-uppercase">add your image</a>
     </div>
-  <% } else if(displayError) { %>
-    <div class="row d-flex justify-content-center alert alert-danger" role="alert">
-        <%= displayError %>
-    </div>
-  <% }%>
-  <% if(isAuthenticated) { %>
-    <div class="row p-3 d-flex justify-content-center">
-      <a href="/gallery/upload" class="btn btn-info h5 font-weight-bold text-uppercase">add your image</a>
-    </div>   
-  <% } %>
+    <% } %>
   <% if(images.length === 0) { %>
-    <div class="row d-flex justify-content-center">
-      <div class="alert alert-danger font-weight-bold text-center border border-danger border-rounded" role="alert">
-        Sorry, there are no images uploaded by anyone, yet!
-      </div>
-    </div>
+      <div class="row d-flex justify-content-center">
+        <img src="/img/pale-list-is-empty.png" height="400" alt="Illustration of an empty frame">
+      </div>    
   <% } %>
   <div class="row p-3">
      <div class="card-deck">
