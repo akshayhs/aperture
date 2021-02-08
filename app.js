@@ -1,3 +1,4 @@
+const fs = require('fs');
 const bodyParser = require('body-parser');
 require('dotenv').config({ path: './config/.env' });
 const express = require('express');
@@ -8,6 +9,7 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('./config/multer');
 const helmet = require('helmet');
+const morgan = require('morgan');
 
 const Multer = require('multer');
 
@@ -32,6 +34,9 @@ const store = new MongoStore({
 /* For CSRF protection */
 const csrfToken = csrf();
 
+/* Morgan file config */
+const fileStream = fs.createWriteStream(path.join(__dirname, 'access.log'));
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -55,6 +60,8 @@ app.use(flash());
 app.use(multer);
 /* For Additional Response headers */
 app.use(helmet());
+/* Morgan request logger */
+app.use(morgan('combined', { stream: fileStream }));
 
 /* LOCALS */
 app.use((req, res, next) => {
