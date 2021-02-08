@@ -7,6 +7,9 @@ const session = require('express-session');
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('./config/multer');
+const helmet = require('helmet');
+
+const Multer = require('multer');
 
 /* ROUTES */
 const galleryRoutes = require('./routes/gallery');
@@ -50,6 +53,8 @@ app.use(csrfToken);
 app.use(flash());
 /* For image uploads via multer */
 app.use(multer);
+/* For Additional Response headers */
+app.use(helmet());
 
 /* LOCALS */
 app.use((req, res, next) => {
@@ -67,8 +72,9 @@ app.use('/auth', authRoutes);
 app.use(mainRoutes);
 
 const port = process.env.PORT || 3000;
+const env = process.env.NODE_ENV || 'developer';
 
 app.listen(port, () => {
 	db();
-	console.log(`Node.js application now live on port ${port}`);
+	console.log(`Node.js application now live on port ${port} in a ${env} environment`);
 });
