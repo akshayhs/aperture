@@ -7,6 +7,8 @@ const userSchema = new Schema(
 			type: String,
 			lowercase: true,
 			required: true,
+			minlength: 3,
+			maxlength: 10,
 			unique: true,
 		},
 		avatar: {
@@ -27,6 +29,8 @@ const userSchema = new Schema(
 		password: {
 			type: String,
 			required: true,
+			minlength: 8,
+			maxlength: 16,
 		},
 		name: {
 			first: { type: String, trim: true },
