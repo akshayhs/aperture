@@ -1,89 +1,83 @@
 <%- include('./partials/header') %>
 <%- include('./partials/nav') %>
-<div class="container my-3">
-  <div class="row d-flex col-sm-12 p-3">
-  <!-- Breacrumb -->
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
-      <li class="breadcrumb-item active text-capitalize" aria-current="page">blogs</li>
-    </ol>
-  </nav>
+<% if(blogs.length === 0) { %>
+  <div class="m-0 p-3 alert alert-danger text-center border-top-0 border-left-0 border-right-0 rounded-0 border-danger font-weight-bold" role="alert">
+    Sorry, there are no blogs uploaded by anyone, yet!
   </div>
-  <div class="d-flex row col-sm-12 p-3">
-    <div class="col align-items-start">
-      <h1 class="text-capitalize">blogs</h1>
-    </div>
-      <form class="form-inline" action="/blogs/search/results" method="GET">
-        <label class="sr-only" for="s">search</label>
-        <div class="input-group mb-2 mr-sm-2">
-          <input type="text" name="s" class="form-control" id="s" placeholder="Search for blogs">
-          <div class="input-group-append">
-            <div class="input-group-text"><i class="fas fa-search"></i></div>
-          </div>
-        </div>
-        <button type="submit" class="ml-2 btn btn-primary mb-2 text-capitalize">&nbsp;search</button>
-        </form>
-  </div>
-  <% if(isAuthenticated) { %>
-    <div class="row p-3 d-flex justify-content-center">
-      <a href="/blogs/add" class="btn btn-info h5 font-weight-bold text-uppercase">add your blog</a>
-    </div>
-  <% } %>  
-  <% if(blogs.length === 0) { %>
-    <div class="row d-flex justify-content-center">
-      <div class="alert alert-danger font-weight-bold text-center border border-danger border-rounded" role="alert">
-        Sorry, there are no blogs uploaded by anyone, yet!
+<% } %>
+<div class="container my-3">  
+    <% if(isAuthenticated) { %>
+      <div class="col-sm-12 col-md-6 mx-auto p-3">
+        <a href="/blogs/add" class="btn btn-info h5 font-weight-bold text-uppercase">add your blog</a>
       </div>
-    </div>
-      <% } else { %>
-  <div class="row p-3">    
+      <% } %>
+  </div>
+  <div class="row d-flex justify-content-center align-items-center">
+    <img src="/img/searching-error.png" height="300" alt="Illustration of an empty page">
+  </div> 
+  <div class="row p-3">217416
     <div class="card-columns">
       <% for(blog of blogs) { %>
-        <div class="card <%= isAuthenticated && blog.author.username === user.username ? 'border-primary' : '' %>" style="width: 18.0rem">
+        <div class="card <%= isAuthenticated && blog.author.username === user.username ? 'border-primary' : '' %>"
+          style="width: 18.0rem">
           <div class="card-body">
-            <h5 class="card-title"><%= blog.title %></h5>
-            <p class="card-text"><%= blog.abstract %></p>
+            <h5 class="card-title">
+              <%= blog.title %>
+            </h5>
+            <p class="card-text">
+              <%= blog.abstract %>
+            </p>
             <a class="btn btn-info" target="blank" href="/blogs/<%= blog._id%>">View</a>
-            <% if(isAuthenticated && blog.author._id.toString() === user._id.toString())  { %>
+            <% if(isAuthenticated && blog.author._id.toString()===user._id.toString()) { %>
               <!-- Delete confirmation modal button -->
               <button class="btn btn-danger ml-3" data-toggle="modal" data-target="#deleteimage">Delete</button>
               <!-- Delete confirmation modal display -->
-              <div class="modal fade" id="deleteimage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal fade" id="deleteimage" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content border-1 border-danger">
                     <div class="modal-header bg-danger text-white">
-                      <h5 class="modal-title font-weight-bold" id="exampleModalLongTitle">Are you sure you want to delete?</h5>
-                      <button type="button" class="close text-white font-weight-bold" data-dismiss="modal" aria-label="Close">
+                      <h5 class="modal-title font-weight-bold" id="exampleModalLongTitle">Are you sure you want to delete?
+                      </h5>
+                      <button type="button" class="close text-white font-weight-bold" data-dismiss="modal"
+                        aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
                     <div class="modal-body">
-                      <span class="font-weight-bold">Deleting an existing blog is a permanent process</span>.&nbsp;Once a blog is deleted from the website, it is no longer accessible by anyone, including you, the author.&nbsp;In addition to it, all comments added by other users will also be deleted.<br><br><span class="font-weight-bold">Deleted blogs cannot be restored manually in any circumstances</span>.<br><br>Keeping this mind, please confirm if you wish to proceed with deleting the blog.
+                      <span class="font-weight-bold">Deleting an existing blog is a permanent process</span>.&nbsp;Once a
+                      blog is deleted from the website, it is no longer accessible by anyone, including you, the
+                      author.&nbsp;In addition to it, all comments added by other users will also be deleted.<br><br><span
+                        class="font-weight-bold">Deleted blogs cannot be restored manually in any
+                        circumstances</span>.<br><br>Keeping this mind, please confirm if you wish to proceed with
+                      deleting the blog.
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-warning font-weight-bold" data-dismiss="modal">Go back</button>
                       <form action="/blogs/<%= blog.id %>/?_method=DELETE" method="POST">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button id="btn_delete" type="submit" class="btn btn-danger ml-2 font-weight-bold">Confirm deletion</button>
-                      </form>    
+                        <button id="btn_delete" type="submit" class="btn btn-danger ml-2 font-weight-bold">Confirm
+                          deletion</button>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
-            <% } %>
+              <% } %>
           </div>
           <div class="card-footer">
-            <% if(isAuthenticated && blog.author.username === user.username) { %>
-              <small class="text-muted">You created this post on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
-            <% } else { %>
-              <small class="text-muted">by&nbsp;<%= blog.author.firstname || blog.author.username %></a> on <%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'}) %></small>
-            <% } %>           
+            <% if(isAuthenticated && blog.author.username===user.username) { %>
+              <small class="text-muted">You created this post on <%= blog.createdAt.toLocaleDateString('en-IN',
+                  {day: 'numeric' , month: 'long' , year: 'numeric' , weekday: 'long' }) %></small>
+              <% } else { %>
+                <small class="text-muted">by&nbsp;<%= blog.author.firstname || blog.author.username %></a> on <%=
+                      blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric' , month: 'long' , year: 'numeric' ,
+                      weekday: 'long' }) %></small>
+                <% } %>
           </div>
         </div>
         <% } %>
     </div>
   </div>
- <% }%>
 </div>
 <%- include('./partials/footer') %>
