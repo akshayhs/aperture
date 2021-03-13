@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post('/contact/success', controller.submitResponse);
 router.get('/blogs', controller.displayBlogs);
-router.get('/members', controller.displayMembers);
 router.get('/gallery', controller.displayGallery);
 router.get('/about', controller.displayAbout);
 router.get('/contact', controller.displayContact);
