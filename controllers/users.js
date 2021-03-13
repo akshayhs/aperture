@@ -3,7 +3,6 @@ const fs = require('fs');
 
 const User = require('../models/user');
 const Image = require('../models/image');
-const { update } = require('../models/user');
 
 /* CREATE */
 exports.completeUserProfile = async (req, res) => {
@@ -60,6 +59,16 @@ exports.completeUserProfile = async (req, res) => {
 };
 
 /* READ */
+exports.displayMembers = async (req, res) => {
+	res.render('./members', {
+		title: 'Members',
+		user: res.locals.currentUser,
+		count: await User.find().countDocuments(),
+		users: await User.find(),
+		isAuthenticated: res.locals.isAuthenticated,
+		user: res.locals.loggedInUser,
+	});
+};
 exports.completeProfile = (req, res) => {
 	res.render('./user/complete', {
 		title: 'Complete your user profile',
