@@ -115,17 +115,6 @@ exports.displayBlogs = (req, res) => {
 	});
 };
 
-exports.displayMembers = async (req, res) => {
-	res.render('./members', {
-		title: 'Members',
-		user: res.locals.currentUser,
-		count: await User.find().countDocuments(),
-		users: await User.find(),
-		isAuthenticated: res.locals.isAuthenticated,
-		user: res.locals.loggedInUser,
-	});
-};
-
 exports.displayContact = async (req, res) => {
 	res.render('./contact', {
 		title: 'Blogs/discussions',
