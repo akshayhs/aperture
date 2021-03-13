@@ -59,7 +59,11 @@ app.use(flash());
 /* For image uploads via multer */
 app.use(multer);
 /* For Additional Response headers */
-app.use(helmet());
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+	})
+);
 /* Morgan request logger */
 app.use(morgan('combined', { stream: fileStream }));
 
@@ -74,7 +78,7 @@ app.use((req, res, next) => {
 /* EXPRESS ROUTES */
 app.use('/gallery', galleryRoutes);
 app.use('/blogs', blogRoutes);
-app.use('/users', userRoutes);
+app.use('/members', userRoutes);
 app.use('/auth', authRoutes);
 app.use(mainRoutes);
 
