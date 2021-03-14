@@ -1,0 +1,22 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+<div class="container p-3">
+  <div class="row mx-3">
+    <h2 class="text-capitalize">images under <%= category %></h2>
+  </div>
+  <div class="row col-12 py-3 mx-1 my-2 col-lg-3">
+    <% images.forEach(image => { %>
+      <div class="card" style="width: 18rem;">
+        <img src="<%= image.path %>" class="card-img-top" alt="<%= image.title %>">
+        <div class="card-body">
+          <h5 class="card-title"><%= image.title %></h5>
+          <p class="card-text"><%= image.caption %>
+          </p>
+          <p class="card-text">by <%= image.createdBy.name.first || image.createdBy.username %> <%= image.createdBy.name.last || null %> on <%= image.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'numeric', year: 'numeric'})%></p>
+          <a href="/gallery/<%= image.id %>" target="blank" class="btn btn-primary">More details</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/footer') %>
