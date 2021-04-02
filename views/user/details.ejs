@@ -8,35 +8,35 @@
     <!-- Left -->
     <div class="col-12 col-lg-3 p-3">
       <div class="row">
-        <img class="border rounded" src="<%= associatedUser.avatar %>" alt="Avatar for user: <%= associatedUser.name.first%> <%= associatedUser.name.last %>">
+        <img class="border rounded-circle rounded-sm" src="<%= foundUser.avatar %>" alt="Avatar for user: <%= foundUser.name.first%> <%= foundUser.name.last %>" height="100">
       </div>
       <div class="row col my-2 py-2">
-        <h6 class="text-capitalize">user since:&nbsp;<%= associatedUser.createdAt.toLocaleDateString('en-IN', {date: 'numeric', month: 'long', year: 'numeric'}) %></h6>
+        <h6 class="text-capitalize">user since:&nbsp;<%= foundUser.createdAt.toLocaleDateString('en-IN', {date: 'numeric', month: 'long', year: 'numeric'}) %></h6>
       </div>
-        <h6>Total works:&nbsp;<span class="font-weight-bold"><%= associatedUser.images.length %></span></h6>
-        <h6>Total blogs:&nbsp;<span class="font-weight-bold"><%= associatedUser.blogs.length %></span></h6>
+        <h6>Total works:&nbsp;<span class="font-weight-bold"><%= foundUser.images.length %></span></h6>
+        <h6>Total blogs:&nbsp;<span class="font-weight-bold"><%= foundUser.blogs.length %></span></h6>
     </div>
     <!-- Right -->
     <div class="col-12 col-lg-9 p-3">
       <!-- User legal name -->
       <div class="row">
-        <h2 class="font-weight-bold text-capitalize"><%= associatedUser.name.first%>&nbsp;<%= associatedUser.name.last %></h2>
+        <h2 class="font-weight-bold text-capitalize"><%= foundUser.name.first%>&nbsp;<%= foundUser.name.last %></h2>
       </div>
       <!-- User website -->
       <div class="row my-2">
-        <h6 class="text-lowercase"><i class="fas fa-globe-asia"></i>&nbsp;<a target="blank" href="http://<%=associatedUser.website%>"><u><%= associatedUser.website%></u></a></h6>
+        <h6 class="text-lowercase"><i class="fas fa-globe-asia"></i>&nbsp;<a target="blank" href="http://<%=foundUser.website%>"><u><%= foundUser.website%></u></a></h6>
       </div>
       <!-- User biography -->
       <div class="row my-4">
-        <p class="text-justify"><%= associatedUser.biography %></p>
+        <p class="text-justify"><%= foundUser.biography %></p>
       </div>
       <!-- User cameras -->
       <div class="row my-1">
-        <p>Camera/s:&nbsp;<span class="font-weight-bold"><%= associatedUser.cameras%></span></p>
+        <p>Camera/s:&nbsp;<span class="font-weight-bold"><%= foundUser.cameras%></span></p>
       </div>
       <!-- User lenses -->
       <div class="row my-1">
-        <p>Lenses:&nbsp;<span class="font-weight-bold"><%= associatedUser.lenses%></span></p>
+        <p>Lenses:&nbsp;<span class="font-weight-bold"><%= foundUser.lenses%></span></p>
       </div>      
     </div>  
   </header>
@@ -48,16 +48,17 @@
     </div>
     <div class="row my-2 p-3">
       <div class="card-deck">
-          <% associatedUser.images.forEach(image => { %>
-            <div class="card bg-light">
-              <img src="<%= image.path %>" alt="<%= image.title %>" class="card-img-top">
-              <div class="card-body text-center">
-                <h5 class="card-title"><%= image.title %></h5>
-                <p class="card-text text-muted">on&nbsp;<%= image.createdAt.toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric'})%></p>
-                <a href="/gallery/<%= image._id%>" class="btn btn-info text-capitalize">details</a>
-              </div>
+        <% for(image of images) { %>
+          <div class="card" style="width: 18rem;">
+            <img src="<%= image.path %>" class="card-img-top" alt="<%= image.title %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= image.title %></h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.
+              </p>
+              <a href="/gallery/<%= image._id%>" target="blank" class="btn btn-primary">More details</a>
             </div>
-            <% }) %>
+          </div>
+        <% } %>        
       </div>
     </div>
   </section>
@@ -67,21 +68,26 @@
     <div class="row p-3">
       <h6 class="font-weight-bold text-capitalize">blogs</h6>
     </div>
-    <div class="row my-2 p-3">
-      <div class="card-deck">
-        <% associatedUser.blogs.forEach(blog=> { %>
-          <div class="card bg-light">
-            <div class="card-body text-center">
-              <h5 class="card-title">
-                <%= blog.title %>
-              </h5>
-              <p class="card-text muted">on&nbsp;<%= blog.createdAt %>
-              </p>
-              <a href="/blogs/<%= blog._id%>" class="btn btn-info text-capitalize">details</a>
+    <% if (foundUser.blogs.length === 0) { %>
+      <p><%= foundUser.name.first || username %>&nbsp;hasn't created any blogs yet!&nbsp;☹️</p>
+    <% } else { %>
+      <div class="row my-2 p-3">
+        <div class="card-deck">
+          <% foundUser.blogs.forEach(blog=> { %>
+            <div class="card bg-light">
+              <div class="card-body text-center">
+                <h5 class="card-title">
+                  <%= blog.title %>
+                </h5>
+                <p class="card-text muted">on&nbsp;<%= blog.createdAt.toLocaleDateString('en-IN', {day: 'numeric' ,
+                    month: 'numeric' ,year: 'numeric' }) %>
+                </p>
+                <a href="/blogs/<%= blog._id%>" class="btn btn-info text-capitalize">details</a>
+              </div>
             </div>
-          </div>
-          <% }) %>
-      </div>
+            <% }) %>
+        </div>
+    <% } %>    
     </section>
 </div>
 <%- include('../partials/footer') %>
