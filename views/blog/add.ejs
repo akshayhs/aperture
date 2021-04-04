@@ -1,10 +1,12 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
 <div class="container my-3 p-3">
-  <h1 class="text-center text-capitalize">add your blog</h1>
-  <form class="card p-5 bg-light my-3" action="/blogs/success?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+  <h1 class="text-center text-capitalize mb-3">add your blog</h1>
+  <form class="card p-5 bg-light my-3" action="/blogs/success" method="POST" enctype="multipart/form-data">
+    <!-- CSRF Token -->
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <!-- Image -->
-    <h4 class="text-capitalize text-center">image information </h4>
+    <h4 class="text-capitalize text-center">image information</h4>
     <div class="row my-3">
       <div class="col col-12">
       <div class="form-group">
@@ -56,11 +58,11 @@
     <div class="form-group my-3">
       <div class="form-group form-check">
         <input type="checkbox" name="copyright" id="copyright" class="form-check-input" required>
-        <label for="checkbox">I hereby confirm that I am the sole author of the box above and I agree to cooperate with the platform in case of any copyright infringement claims.</label>
+        <label for="checkbox">I hereby confirm that I am the sole author of the blog above and I agree to cooperate with the platform in case of any copyright infringement claims.</label>
       </div>
     </div>
     <!-- Buttons and CSRF token -->
-    <div class="form-group my-3">    
+    <div class="form-group my-3">
     <button type="submit" class="btn btn-info text-uppercase font-weight-bold p-2 mr-2">create</button>
     <button type="reset" class="btn btn-warning text-uppercase font-weight-bold p-2 ml-2">reset</button>
   </div>
