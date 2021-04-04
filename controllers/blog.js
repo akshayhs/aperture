@@ -5,7 +5,6 @@ const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
 const BlogComment = require('../models/blogcomment');
-const { clearCache } = require('ejs');
 
 /* CREATE */
 
@@ -82,7 +81,8 @@ exports.saveBlog = async (req, res) => {
 				{ $set: { blogs: blog._id } },
 				{ new: true }
 			);
-			return res.redirect(`/blogs/${blog._id}`);
+			req.flash('uploadSuccess', 'Your blog was created successfully');
+			return res.status(201).redirect(`/blogs/${blog._id}`);
 		} catch (error) {
 			console.log(error);
 		}
@@ -117,10 +117,12 @@ exports.createBlog = (req, res) => {
 };
 
 exports.displayBlog = async (req, res) => {
+	let uploadSucessMessage = req.flash('uploadSuccess')[0];
 	let commentDeleteMessage = req.flash('deleteCommentSuccess');
 	let commentUpdateMessage = req.flash('commentEditSuccess');
 	if (commentUpdateMessage.length === 0) commentUpdateMessage = null;
 	if (commentDeleteMessage.length === 0) commentDeleteMessage = null;
+	if (uploadSucessMessage.length === 0) uploadSucessMessage = null;
 	try {
 		const blog = await Blog.findById({ _id: req.params.id })
 			.populate({ path: 'author', model: User })
@@ -133,6 +135,7 @@ exports.displayBlog = async (req, res) => {
 			blog: blog,
 			comments: blog.comments,
 			author: blog.author,
+			uploadSuccess: uploadSucessMessage,
 			updateSuccess: commentUpdateMessage,
 			deleteSuccess: commentDeleteMessage,
 		});
