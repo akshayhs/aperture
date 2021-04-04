@@ -1,6 +1,12 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
-
+<% if(uploadSuccess) { %>
+  <div
+    class="m-0 p-3 alert alert-success border-top-0 border-left-0 border-right-0 rounded-0 border-success text-center font-weight-bold"
+    role="alert">
+    <%= uploadSuccess %>
+  </div>
+  <% } %>
 <div class="container my-3 p-3">
   <h1><%= blog.title %></h1>
   <h4><%= blog.abstract %></h4>
