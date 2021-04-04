@@ -5,7 +5,6 @@ const Blog = new Schema(
 	{
 		image: {
 			type: String,
-			required: true,
 		},
 		public_id: {
 			type: String,
@@ -55,7 +54,7 @@ const Blog = new Schema(
 
 Blog.pre('remove', async function (next) {
 	try {
-		mongoose.model('Comment').remove({ author: this._id });
+		mongoose.model('Comment').remove({ blogId: this._id });
 		console.log(`Comments associated with ${this.title} were removed automatically using the remove hook.`);
 		next();
 	} catch (error) {
