@@ -5,63 +5,88 @@ const Blog = require('../models/blog');
 const User = require('../models/user');
 const Comment = require('../models/blogcomment');
 const BlogComment = require('../models/blogcomment');
+const { clearCache } = require('ejs');
 
 /* CREATE */
 
-exports.saveBlog = (req, res) => {
-	const author = req.session.user;
-	const image = req.file;
-	const { caption, alt_text, title, copyright, abstract, description, shorts } = req.body;
-	console.log(req.file);
-	console.log(req.body);
+exports.saveBlog = async (req, res) => {
 	/* Reject the upload if the author does not check the copyright box */
-	if (copyright != 'on') {
+	if (req.body.copyright != 'on') {
 		req.flash('copyrightError', 'Please check the copyright checkbox to complete uploading your blog');
 		return res.status(422).redirect('/blogs/add');
 	}
-	if (!image) image = '';
-	if (alt_text.length === 0) alt_text = null;
-	if (caption.length === 0) caption = null;
-	const imageTitle = title.replace(' ', '_');
-	/* Upload the file to cloudinary */
-	cloudinary.uploader.upload(
-		image.path,
-		{
-			public_id: `projects/aperture/images/blogs/${imageTitle}`,
-			resource_type: 'image',
-			unique_filename: true,
-			discard_original_filename: true,
-		},
-		(error, result) => {
-			if (error) console.log(error);
-			console.log(result);
-			const blog = new Blog({
-				image: result.url,
-				public_id: result.public_id,
-				caption,
-				title,
-				alt_text,
-				abstract,
-				description,
-				copyright: true,
-				author: author._id,
-			});
-			blog
-				.save()
-				.then((blog) => {
-					return User.findByIdAndUpdate({ _id: author._id }, { $set: { blogs: blog._id } }, { new: true });
-				})
-				.then(() => {
-					fs.unlink(image.path, (error) => {
-						if (error) console.log(error);
-						res.status(201).redirect('/blogs');
+	/* Check if there's any file in the filestream to upload to Cloudinary */
+	if (req.file) {
+		try {
+			// Fetch the title of the image for file name
+			const imageTitle = req.body.title.replace(' ', '_');
+			/* Upload the file to cloudinary */
+			cloudinary.uploader.upload(
+				req.file.path,
+				{
+					public_id: `projects/aperture/images/blogs/${imageTitle}`,
+					resource_type: 'image',
+					unique_filename: true,
+					discard_original_filename: true,
+				},
+				(error, result) => {
+					if (error) console.log(error);
+					console.log(result);
+					// Creating a new Blog instance
+					const blog = new Blog({
+						image: result.url,
+						public_id: result.public_id,
+						caption: req.body.caption,
+						title: req.body.title,
+						alt_text: req.body.alt_text,
+						abstract: req.body.abstract,
+						description: req.body.description,
+						copyright: true,
+						author: res.locals.loggedInUser._id,
 					});
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+					blog
+						.save()
+						.then((blog) => {
+							return User.findByIdAndUpdate(
+								{ _id: res.locals.loggedInUser._id },
+								{ $set: { blogs: blog._id } },
+								{ new: true }
+							);
+						})
+						.then(() => {
+							/* Clears the file in the local file storage */
+							fs.unlink(req.file.path, (error) => {
+								if (error) throw new Error(error);
+								req.flash('uploadSuccess', 'Your blog was created successfully');
+								return res.status(201).redirect(`/blogs/${blog._id}`);
+							});
+						});
+				}
+			);
+		} catch (error) {
+			console.log(error);
 		}
-	);
+		/* There was no file in the filestream found. Skipping image upload and directly creating a blog with other details */
+	} else {
+		try {
+			const blog = new Blog({
+				title: req.body.title,
+				abstract: req.body.abstract,
+				description: req.body.description,
+				copyright: true,
+				author: res.locals.loggedInUser._id,
+			});
+			await blog.save();
+			await User.findOneAndUpdate(
+				{ _id: res.locals.loggedInUser._id },
+				{ $set: { blogs: blog._id } },
+				{ new: true }
+			);
+			return res.redirect(`/blogs/${blog._id}`);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 };
 
 exports.addUserComment = (req, res) => {
@@ -82,6 +107,7 @@ exports.addUserComment = (req, res) => {
 
 /* READ */
 exports.createBlog = (req, res) => {
+	console.log(res.locals.csrfToken);
 	res.status(200).render('./blog/add', {
 		title: 'Add your blog',
 		isAuthenticated: res.locals.isAuthenticated,
