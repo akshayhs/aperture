@@ -12,9 +12,11 @@
       </div>
       <% } %>
   </div>
-  <div class="row d-flex justify-content-center align-items-center">
-    <img src="/img/searching-error.png" height="300" alt="Illustration of an empty page">
-  </div> 
+  <% if (blogs.length === 0) { %>
+    <div class="row d-flex justify-content-center align-items-center">
+      <img src="/img/searching-error.png" height="300" alt="Illustration of an empty page">
+    </div> 
+  <% } %>
   <div class="row p-3">
     <div class="card-columns">
       <% for(blog of blogs) { %>
