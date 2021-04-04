@@ -30,7 +30,6 @@ exports.saveBlog = async (req, res) => {
 				},
 				(error, result) => {
 					if (error) console.log(error);
-					console.log(result);
 					// Creating a new Blog instance
 					const blog = new Blog({
 						image: result.url,
@@ -122,7 +121,7 @@ exports.displayBlog = async (req, res) => {
 	let commentUpdateMessage = req.flash('commentEditSuccess');
 	if (commentUpdateMessage.length === 0) commentUpdateMessage = null;
 	if (commentDeleteMessage.length === 0) commentDeleteMessage = null;
-	if (uploadSucessMessage.length === 0) uploadSucessMessage = null;
+	if (!uploadSucessMessage) uploadSucessMessage = null;
 	try {
 		const blog = await Blog.findById({ _id: req.params.id })
 			.populate({ path: 'author', model: User })
